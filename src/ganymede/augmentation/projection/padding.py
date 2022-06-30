@@ -16,8 +16,8 @@ class PaddingCoordTransformer:
         new_w = 1.0 + right_pad  - (0.0 - left_pad)
         new_h = 1.0 + bottom_pad - (0.0 - top_pad)
         
-        self.w_scale = 1.0 / self.new_w
-        self.h_scale = 1.0 / self.new_h
+        self.w_scale = 1.0 / new_w
+        self.h_scale = 1.0 / new_h
         
         self.x_offset = left_pad / new_w
         self.y_offset = top_pad  / new_h

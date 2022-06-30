@@ -6,11 +6,11 @@ import multiprocessing
 import cv2 as cv
 import numpy as np
 # project
-from ganymede.imaging.image import ImageType
+from ganymede.imaging import ImageType
 import ganymede.ml.pytorch.tensor as g_tensor
 
 
-def __load_img_and_target(
+def load_img_and_target_thread_func(
     dataset_loader, 
     idx
 ):
@@ -29,7 +29,7 @@ class BatchSampler:
     ):
         self.random_i = random.Random(random_seed)
 
-        max_workers = multiprocessing.cpg_count() if threads == 0 else threads
+        max_workers = multiprocessing.cpu_count() if threads == 0 else threads
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
 
         self.indices = list(np.arange(len(dataset_loader)))
@@ -62,7 +62,7 @@ class BatchSampler:
 
         future_to_img = {
             self.executor.submit(
-                __load_img_and_target, 
+                load_img_and_target_thread_func, 
                 self.dataset_loader, 
                 ind,
             ) : ind for ind in selected_indices

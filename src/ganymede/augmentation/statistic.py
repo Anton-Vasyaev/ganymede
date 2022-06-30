@@ -2,7 +2,8 @@
 from copy import deepcopy
 # project
 import ganymede.random as g_random
-from .parameters import *
+from .parameters   import *
+from .distribution import *
 
 
 def create_random_padding(
@@ -97,6 +98,27 @@ def create_random_mirror(
 
     return MirrorParameters(horizontal, vertical)
 
+
+def create_random_augmentation_selector(
+    dist,
+    random_instance = None
+):
+    t = type(dist)
+
+    if t is BasicColorDistribution:
+        return create_random_basic_color(dist, random_instance)
+    elif t is MirrorDistribution:
+        return create_random_mirror(dist, random_instance)
+    elif t is PaddingDistribution:
+        return create_random_padding(dist, random_instance)
+    elif t is Rotate2dDistribution:
+        return create_random_rotate2d(dist, random_instance)
+    elif t is Rotate3dDistribution:
+        return create_random_rotate3d(dist, random_instance)
+    elif t is StretchDistribution:
+        return create_random_stretch(dist, random_instance)
+    else:
+        raise NotImplementedError(f'not implemented create_random_augmentation_selector for {t}')
 
 
 def create_random_aug_stages(

@@ -86,7 +86,7 @@ def augmentation_stretch(
 ) -> AugmentationData:
     new_data = {}
 
-    img = data['image']
+    img = data.image
     img_h, img_w = img.shape[0:2]
 
     __validate_offset(offset, (img_w, img_h), orientation)

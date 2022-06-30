@@ -5,7 +5,7 @@ import numpy as np
 import cv2   as cv
 # project
 import ganymede.draw    as g_draw
-import ganymede.debug   as g_debug
+import ganymede.opencv  as g_cv
 import ganymede.imaging as g_image
 
 
@@ -83,7 +83,7 @@ def visualise_batch(
                     [ (f'{idx}/{len(img_batch)}, channel:{map_idx+1}/{img.shape[2]}', (0.03, 0.05), (0, 240, 0)) ],
                     0.1
                 )
-                g_debug.debug_img(map)
+                g_cv.imshow('debug tensor', map)
             
         else:
             g_image.create_channel_if_not_exist(img)
@@ -94,8 +94,8 @@ def visualise_batch(
                 [ (f'{idx}/{len(img_batch)}', (0.03, 0.05), (0, 240, 0)) ],
                 0.1
             )
-            
-            g_debug.debug_img(img)
+
+            g_cv.imshow('debug tensor', img)
 
     
 def make_coords_input_tensor(batch_size, height, width):

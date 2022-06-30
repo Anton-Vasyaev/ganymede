@@ -35,12 +35,13 @@ def scale(bbox, scale_size):
 
     x1, y1, x2, y2 = bbox
     w, h           = x2 - x1, y2 - y1
+    xc, yc         = x1 + w / 2, y1 + h / 2
 
-    w_scale = w * scale_w / 2
-    h_scale = h * scale_h / 2
+    w *= scale_w 
+    h *= scale_h
 
-    x1, y1 = x1 - w_scale, y1 - h_scale
-    x2, y2 = x2 + w_scale, y2 + h_scale
+    x1, y1 = xc - w / 2, yc - w / 2
+    x2, y2 = xc + w / 2, yc + w / 2
 
     return [x1, y1, x2, y2]
 
@@ -55,3 +56,24 @@ def center(bbox):
     l, t, r, b = bbox
 
     return (l + r) / 2, (t + b) / 2
+
+
+def iom(v, z):
+    vx1, vy1, vx2, vy2 = v
+    zx1, zy1, zx2, zy2 = z
+
+    l = max(vx1, zx1)
+    r = min(vx2, zx2)
+    t = max(vy1, zy1)
+    b = min(vy2, zy2)
+
+    if l >= r or t >= b: return 0.0
+
+    a_area = area(v)
+    b_area = area(z)
+    min_area = min(a_area, b_area)
+
+    inter_area = area([l, t, r, b])
+
+    return inter_area / min_area
+    

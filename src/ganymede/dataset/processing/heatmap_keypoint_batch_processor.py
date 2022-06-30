@@ -2,9 +2,9 @@
 import cv2 as cv
 import torch
 # project
-import ganymede.imaging.image  as g_image
+import ganymede.imaging  as g_image
 import ganymede.ml.pytorch.tensor as g_tensor
-from   ganymede.imaging.image import ImageType
+from   ganymede.imaging import ImageType
 from .heatmap    import generate_keypoints_heatmap
 from .auxiliary import default_input_processor
 

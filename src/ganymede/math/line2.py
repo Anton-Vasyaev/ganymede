@@ -1,5 +1,8 @@
 # python
 import math
+# project
+import ganymede.math.alg_tuple2 as m_t2
+import ganymede.math.vec2       as m_v2
 
 
 def center(line):
@@ -53,7 +56,6 @@ def length(line):
     return math.sqrt(square_length(line))
 
 
-
 def crossing(a, b):
     (ax1, ay1), (ax2, ay2) = a
     (bx1, by1), (bx2, by2) = b
@@ -61,12 +63,82 @@ def crossing(a, b):
     # num - числитель
     # den - знаменталь
     x_num = (ax1 * ay2 - ay1 * ax2) * (bx1 - bx1) - (ax1 - ax2) * (bx1 * by2 - by1 * bx1)
-    x_den = (ax1 - ax2) * (by1 - by2) - (ay1 - ay2) * (bx1 - bx1)
+    x_div = (ax1 - ax2) * (by1 - by2) - (ay1 - ay2) * (bx1 - bx1)
 
     y_num = (ax1 * ay2 - ay1 * ax2) * (by1 - by2) - (ay1 - ay2) * (bx1 * by2 - by1 * bx1)
-    y_den = (ax1 - ax2) * (by1 - by2) - (ay1 - ay2) * (bx1 - bx1)
+    y_div = (ax1 - ax2) * (by1 - by2) - (ay1 - ay2) * (bx1 - bx1)
 
-    x = x_num / x_den
-    y = y_num / y_den
+    x = x_num / x_div
+    y = y_num / y_div
 
     return x, y
+
+
+def distance_to_point(line, point):
+    x, y = point
+
+    a, b, c = equation(line)
+
+    denominator = abs(a * x + b * y + c)
+    divider     = math.sqrt(a ** 2 + b ** 2)
+
+    return denominator / divider
+
+
+def near_point_on_line(line, point):
+    x0, y0 = point
+
+    a, b, c = equation(line)
+
+    divider = a * a + b * b
+
+    x = (b * ( b * x0 - a * y0) - a * c) / divider
+    y = (a * (-b * x0 + a * y0) - b * c) / divider
+
+    return x, y
+
+
+def lie_on_line(line, point, relative_eps=1e-4):
+    near_point = near_point_on_line(line, point)
+
+    eps = length(line) * relative_eps
+
+    dist_vector = m_t2.sub(near_point, point)
+
+    return m_v2.length(dist_vector) < eps
+
+
+def lie_on_segment(line, point, relative_eps=1e-4):
+    p1 = line[0]
+    p2 = line[1]
+
+    if not lie_on_line(line, point, relative_eps):
+        return False
+
+    sqr_len = square_length(line)
+
+    sqr_dist_1 = m_v2.square_length(m_t2.sub(point, p1))
+    sqr_dist_2 = m_v2.square_length(m_t2.sub(point, p2))
+
+    return sqr_dist_1 <= sqr_len and sqr_dist_2 <= sqr_len
+
+
+def near_point_on_segment(line, point):
+    p1 = line[0]
+    p2 = line[1]
+
+    n_p = near_point_on_line(line, point)
+
+    if lie_on_segment(line, n_p):
+        return n_p
+
+    sqr_dist_1 = m_v2.square_length(m_t2.sub(n_p, p1))
+    sqr_dist_2 = m_v2.square_length(m_t2.sub(n_p, p2))
+
+    return p1 if sqr_dist_2 > sqr_dist_1 else p2
+
+
+def segment_distance_to_point(line, point):
+    n_p = near_point_on_segment(line, point)
+
+    return m_v2.length(m_t2.sub(point, n_p))

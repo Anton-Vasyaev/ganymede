@@ -47,5 +47,3 @@ def contain_point(polygon, point):
     sum_of_angles = m_convert.rad2deg(sum_of_angles)
 
     return m_rel.equal_err(sum_of_angles, 360.0, 1e-2)
-        
-

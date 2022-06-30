@@ -7,9 +7,9 @@ import torch
 import numpy as np
 import cv2 as cv
 # project
-import ganymede.imaging.image as g_image
+import ganymede.imaging as g_image
 import ganymede.ml.pytorch.tensor as g_tensor
-from ganymede.imaging.image import ImageType
+from ganymede.imaging import ImageType
 
 
 def clip(x, min_v, max_v):

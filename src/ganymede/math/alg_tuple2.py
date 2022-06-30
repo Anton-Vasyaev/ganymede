@@ -1,3 +1,8 @@
+# project
+import ganymede.math.auxiliary as m_aux
+
+
+
 def add(a, b):
     av1, av2 = a
     bv1, bv2 = b
@@ -68,3 +73,17 @@ def mean(values):
     sum_t = sum(values)
 
     return div_val(sum_t, len(values))
+
+
+def clip(value, dimensions):
+    v1_dim, v2_dim = dimensions
+
+    v1_min, v1_max = v1_dim
+    v2_min, v2_max = v2_dim
+
+    v1, v2 = value
+
+    v1 = m_aux.clip(v1, v1_min, v1_max)
+    v2 = m_aux.clip(v2, v2_min, v2_max)
+
+    return v1, v2

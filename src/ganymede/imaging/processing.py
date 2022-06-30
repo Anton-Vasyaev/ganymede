@@ -25,17 +25,20 @@ def cast_one_channel_img(
     return img
 
 
-def drop_alpha_channel(img : np.ndarray) -> np.ndarray:
+def drop_alpha_channel(img : np.ndarray, check_alpha = False) -> np.ndarray:
     if len(img.shape) != 3:
         raise ValueError('img has no channels')
 
     if img.shape[2] != 4:
-        raise ValueError(f'bgra image has only 4 channels')
+        if check_alpha:
+            raise ValueError(f'bgra image has only 4 channels')
+
+        return img
         
     return img[...,0:3]
 
 
-def roi_ltrb(
+def roi_bbox(
     img        : np.ndarray, 
     roi_coords : list, 
     normalized : bool = True
@@ -78,5 +81,5 @@ def roi_rect(
 
     x2, y2 = x1 + w, y1 + h
 
-    return roi_ltrb(img, [x1, y1, x2, y2], normalized)
+    return roi_bbox(img, [x1, y1, x2, y2], normalized)
 

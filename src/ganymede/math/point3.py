@@ -1,7 +1,10 @@
 # python
 import math
-# project
-import ganymede.math.alg_tuple3 as t3
+from typing import Tuple
+
+
+Point3D = Tuple[float, float, float]
+
 
 def xy(vec):
     x, y, z = vec

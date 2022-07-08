@@ -1,7 +1,24 @@
 # python
+from typing  import Tuple
 from numbers import Number
 # project
 import ganymede.math.auxiliary as m_aux
+import ganymede.math.point2    as m_p2
+
+
+BBox = Tuple[float, float, float, float]
+
+
+def width(bbox):
+    x1, y1, x2, y2 = bbox
+
+    return x2 - x1
+
+
+def height(bbox):
+    x1, y1, x2, y2 = bbox
+
+    return y2 - y1
 
 
 def clip(
@@ -77,3 +94,27 @@ def iom(v, z):
 
     return inter_area / min_area
     
+
+def corner_points(bbox):
+    x1, y1, x2, y2 = bbox
+
+    return [
+        (x1, y1),
+        (x2, y1),
+        (x1, y2),
+        (x2, y2)
+    ]
+
+
+def reverse_normalize_bbox(src_bbox, area_bbox):
+    x1, y1, x2, y2 = src_bbox
+
+    lt = x1, y1
+    rb = x2, y2
+
+    lt, rb = [m_p2.reverse_normalize_bbox(p, area_bbox) for p in [lt, rb]]
+
+    x1, y1 = lt
+    x2, y2 = rb
+
+    return x1, y1, x2, y2

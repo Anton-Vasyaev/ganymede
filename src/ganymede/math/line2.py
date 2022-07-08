@@ -1,8 +1,13 @@
 # python
 import math
+from typing import Tuple
 # project
 import ganymede.math.alg_tuple2 as m_t2
 import ganymede.math.vec2       as m_v2
+from .point2 import Point2D
+
+
+Line2D = Tuple[Point2D, Point2D]
 
 
 def center(line):

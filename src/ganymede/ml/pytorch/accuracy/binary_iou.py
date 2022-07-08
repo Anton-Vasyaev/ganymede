@@ -1,4 +1,4 @@
-def accuracy_iou(output, target):
+def accuracy_binary_iou(output, target):
     output = output > 0.9
     target = target > 0.9
 

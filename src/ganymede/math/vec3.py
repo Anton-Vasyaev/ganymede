@@ -1,8 +1,12 @@
 # python
 import math
+from typing import Tuple
 # project
 import ganymede.math.vec2     as vec2
 import ganymede.math.relation as m_rel
+
+
+Vector3D = Tuple[float, float, float]
 
 
 def square_length(vec):

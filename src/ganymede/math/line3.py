@@ -1,3 +1,12 @@
+# python
+from typing import Tuple
+# project
+from .point3 import Point3D
+
+
+Line3D = Tuple[Point3D, Point3D]
+
+
 def center(line):
     p1, p2 = line
     x1, y1, z1 = p1

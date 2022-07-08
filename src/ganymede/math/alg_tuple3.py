@@ -1,3 +1,10 @@
+# python
+from typing import Tuple
+
+
+AlgTuple3 = Tuple[float, float, float]
+
+
 def add(a, b):
     av1, av2, av3 = a
     bv1, bv2, bv3 = b

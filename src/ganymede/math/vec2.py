@@ -1,4 +1,9 @@
+# python
 import math
+from typing import Tuple
+
+
+Vector2D = Tuple[float, float]
 
 
 def square_length(vec):

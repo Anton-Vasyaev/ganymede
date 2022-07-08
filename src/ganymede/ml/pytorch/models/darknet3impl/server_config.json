@@ -1,0 +1,45 @@
+{
+    "server" : {
+        "port" : 5558
+    },
+
+    "detectors" : {
+        "side" : {
+            "main_detector" : {
+                "config" : "",
+                "weights" : "",
+                "img_size" : 416
+            },
+            "numbers_detector" : {
+                "config" : "",
+                "weights" : "",
+                "img_size" : 416
+            }
+        }
+    },
+
+    "cameras" : [
+        {
+            "id" : "123",
+            "detector" : "side",
+            "melting_zone" : null
+        },
+        {
+            "id" : "124",
+            "detector" : "side",
+            "melting_zone" : {
+                "xtl" : 0.0,
+                "ytl" : 0.0,
+                "xbr" : 1.0,
+                "ybr" : 1.0,
+                "min_value" : 244,
+                "area_part" : 0.8
+            }
+        },
+        {
+            "id" : "125",
+            "detector" : "overview",
+            "melting_zone" : null
+        }
+    ]
+}

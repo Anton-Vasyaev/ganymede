@@ -1,7 +1,15 @@
+# python
+from typing import List
+# project
 import ganymede.math.alg_tuple2 as m_t2
 import ganymede.math.vec2       as m_v2
 import ganymede.math.convert    as m_convert
 import ganymede.math.relation   as m_rel
+
+from ganymede.math.point2 import Point2D
+
+
+Polygon2D = List[Point2D]
 
 
 def area(polygon):
@@ -10,7 +18,7 @@ def area(polygon):
     first_sum = 0
     y1        = polygon[0][1]
     xn        = polygon[-1][0]
-    for i in range(1, n - 1):
+    for i in range(0, n - 1):
         x_i   = polygon[i][0]
         y_ip1 = polygon[i + 1][1]
 
@@ -19,11 +27,41 @@ def area(polygon):
     second_sum = 0
     x1 = polygon[0][0]
     yn = polygon[-1][1]
-    for i in range(1, n - 1):
+    for i in range(0, n - 1):
         x_ip1 = polygon[i + 1][0]
         y_i   = polygon[i][1]
 
         second_sum += x_ip1 * y_i - x1 * yn
+
+    poly_area = abs(first_sum - second_sum) / 2
+
+    return poly_area
+
+
+def area_can(polygon):
+    n = len(polygon)
+
+    first_sum = 0
+    y1        = polygon[0][1]
+    xn        = polygon[-1][0]
+    for i in range(0, n - 1):
+        x_i   = polygon[i][0]
+        y_ip1 = polygon[i + 1][1]
+
+        first_sum += x_i * y_ip1
+
+    first_sum += xn * y1
+
+    second_sum = 0
+    x1 = polygon[0][0]
+    yn = polygon[-1][1]
+    for i in range(0, n - 1):
+        x_ip1 = polygon[i + 1][0]
+        y_i   = polygon[i][1]
+
+        second_sum += x_ip1 * y_i
+
+    second_sum -= x1 * yn
 
     poly_area = abs(first_sum - second_sum) / 2
 

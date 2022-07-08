@@ -1,7 +1,11 @@
 # python
 from numbers import Number
+from typing  import Tuple
 # project
 import ganymede.math.auxiliary as m_aux
+
+
+Rectangle = Tuple[float, float, float, float]
 
 
 def clip(

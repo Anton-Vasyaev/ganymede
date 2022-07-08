@@ -1,6 +1,10 @@
+# python
+from typing import Tuple
 # project
 import ganymede.math.auxiliary as m_aux
 
+
+AlgTuple2 = Tuple[float, float]
 
 
 def add(a, b):
@@ -62,7 +66,7 @@ def minus(t):
 
 
 def sum(values):
-    sum_t = 0.0, 0.0, 0.0
+    sum_t = 0.0, 0.0
     for v in values:
         sum_t = add(sum_t, v)
 

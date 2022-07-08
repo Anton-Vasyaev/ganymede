@@ -1,8 +1,10 @@
 # python
 import math
+from typing import Tuple
 # project
-import ganymede.math.poly2 as poly2
-import ganymede.math.vec2  as vec2
+
+
+Point2D = Tuple[float, float]
 
 
 def square_distance(a, b):
@@ -85,12 +87,7 @@ def rotate(point, angle, anchor = (0.0, 0.0)):
     y = x * sin + y * cos
 
     return x, y
-
-
-def rotate_list(points, angle, anchor = (0.0, 0.0)):
-    # ToDo need to vectorize via numpy in the future
-    return [ rotate(p, angle, anchor) for p in points]
-
+    
 
 def perspective_transform(
     point,

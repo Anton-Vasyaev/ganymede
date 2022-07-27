@@ -43,8 +43,10 @@ class SegmentBatchProcessor:
             new_mask_list.append(mask)
 
         img_t = g_tensor.img_list_to_tensor_batch(new_img_list,  normalize=False)
-        process_result = self.input_processor(img_t)
-        if not process_result is None: img_t = process_result
+
+        if not self.input_processor is None: 
+            process_result = self.input_processor(img_t)
+            if not process_result is None: img_t = process_result
 
         mask_t = g_tensor.img_list_to_tensor_batch(new_mask_list, normalize=True)
         mask_t[mask_t > 0.01] = 1.0

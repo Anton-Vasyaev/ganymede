@@ -9,6 +9,17 @@ class ImageType(IntEnum):
     BGR  = 1
     GRAY = 2
 
+    @staticmethod
+    def from_str(s):
+        if s == 'rgb':
+            return ImageType.RGB
+        elif s == 'bgr':
+            return ImageType.BGR
+        elif s == 'gray':
+            return ImageType.GRAY
+        else:
+            raise ValueError(f'invalid ImageType str:{s}')
+            
 
     def get_channels(self) -> int:
         if   self == ImageType.BGR:  return 3

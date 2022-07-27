@@ -45,8 +45,6 @@ class RegressionKeypointDetector:
             img = cv.cvtColor(img, cv.COLOR_GRAY2BGR)
         elif g_img.get_channels(img) == 3 and self.in_channels == 1:
             img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-        elif g_img.get_channels(img) == 3 and self.in_channels == 3:
-            img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 
         img_h, img_w = img.shape[0:2]
 

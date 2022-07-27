@@ -1,5 +1,5 @@
 from .euclidian_accuracy import euclidian_accuracy
-from ganymede.ml.pytorch.post_processing import heatmap_keypoint_detection
+from ganymede.ml.pytorch.postprocessing import heatmap_keypoint_detection
 
 
 def heatmap_euclidian_accuracy(output, target):

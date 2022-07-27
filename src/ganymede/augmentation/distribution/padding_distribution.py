@@ -14,8 +14,8 @@ class PaddingDistribution:
     @staticmethod
     def load_from_dict(data):
         return PaddingDistribution(
-            data['left_pads'],
-            data['right_pads'],
-            data['top_pads'],
-            data['bottom_pads']
+            data['left'],
+            data['right'],
+            data['top'],
+            data['bottom']
         )

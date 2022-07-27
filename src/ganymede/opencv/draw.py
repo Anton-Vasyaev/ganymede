@@ -33,7 +33,7 @@ def draw_line(
     p1,
     p2,
     color,
-    thickness,
+    thickness        = 2,
     normalize_coords = True
 ):
     r, g, b = color

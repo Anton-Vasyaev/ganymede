@@ -12,7 +12,7 @@ class BasicColorDistribution:
     @staticmethod
     def load_from_dict(data):
         return BasicColorDistribution(
-            data['red_values'],
-            data['green_values'],
-            data['blue_values']
+            data['red'],
+            data['green'],
+            data['blue']
         )

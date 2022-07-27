@@ -1,6 +1,7 @@
 # python
 import os
 import xml.etree.ElementTree as ET
+from typing import List
 # 3rd party
 import cv2 as cv
 from pathlib import Path
@@ -11,10 +12,10 @@ from .shapes import *
 
 
 def parse_cvat_v1d1(
-    xml_pathes, 
-    directory_path='.',
-    exist_checking=True
-):
+    xml_pathes     : List[str], 
+    directory_path : str  = '.',
+    exist_checking : bool = True
+) -> List[CvatImageMarkup]:
     directory_path_p = Path(directory_path)
 
     # checking xml exist

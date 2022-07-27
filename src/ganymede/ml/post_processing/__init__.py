@@ -1,1 +1,0 @@
-from .heatmap_keypoint_detector import heatmap_keypoint_detection

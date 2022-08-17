@@ -59,7 +59,7 @@ def visualise_batch(
     normalized_float_coords : bool = True,
     visualise_channels      : bool = False
 ) -> None:
-    img_batch = tensor_batch.permute(0, 2, 3, 1).cpu().detach().numpy()
+    img_batch = tensor_batch.clone().permute(0, 2, 3, 1).cpu().detach().numpy()
 
     if np.issubdtype(img_batch.dtype, np.floating) and normalized_float_coords:
         img_batch *= 255

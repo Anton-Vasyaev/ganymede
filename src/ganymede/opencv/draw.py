@@ -3,6 +3,10 @@ from copy import deepcopy
 # 3rd party
 import cv2   as cv
 import numpy as np
+# project
+from ganymede.draw.data import DrawCanvas
+
+from ganymede.math.system_coord_transformer import SystemCoordTransformer
 
 
 
@@ -169,3 +173,40 @@ def fill_polygon(
     coords = np.array([coords], dtype=np.int32)
 
     cv.fillPoly(img, coords, color)
+
+
+
+def draw_canvas(
+    img,
+    canvas : DrawCanvas
+):
+    coord_t = SystemCoordTransformer(
+        canvas.canvas_box,
+        [0.0, 0.0, 1.0, 1.0]
+    )
+
+    shapes = canvas.shapes
+
+    # Draw lines
+    for l_data in shapes.draw_lines:
+        transform_line = coord_t.transform_line(l_data.line)
+        p1, p2         = transform_line
+        draw_line(img, p1, p2, l_data.color, l_data.thickness)
+
+    # Draw lines
+    points = shapes.draw_points
+    for p_data in points:
+        transform_point = coord_t.transform_point(p_data.point)
+        draw_point(img, transform_point, p_data.color, p_data.radius - 1, p_data.radius)
+
+    # Draw polygons
+    draw_polygons = shapes.draw_polygons
+    for poly_data in draw_polygons:
+        transform_poly = coord_t.transform_polygon(poly_data.polygon)
+        draw_polygon(img, transform_poly, poly_data.color, poly_data.thickness)
+
+    # Draw bboxes
+    draw_bboxes = shapes.draw_bboxes
+    for bbox_data in draw_bboxes:
+        transform_bbox = coord_t.transform_bbox(bbox_data.bbox)
+        draw_bbox(img, transform_bbox, bbox_data.color, bbox_data.thickness)

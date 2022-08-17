@@ -55,4 +55,5 @@ def __transform_item(
 
 
 def delegate_transform_points(points_data, transform_functor):
+    if points_data is None: return None
     return __transform_item(points_data, transform_functor)

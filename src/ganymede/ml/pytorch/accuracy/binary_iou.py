@@ -1,4 +1,6 @@
 def accuracy_binary_iou(output, target):
+    eps = 1e-6
+
     output = output > 0.9
     target = target > 0.9
 
@@ -12,4 +14,4 @@ def accuracy_binary_iou(output, target):
     fp = false_positives.sum()
     fn = false_negatives.sum()
     
-    return tp / (tp + fp + fn)
+    return tp / (tp + fp + fn + eps)

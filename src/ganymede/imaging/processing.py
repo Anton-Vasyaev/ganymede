@@ -11,8 +11,8 @@ def create_channel_if_not_exist(img : np.ndarray) -> None:
 
 
 def cast_one_channel_img(
-    img :      np.ndarray, 
-    channels : int = 3
+    img      : np.ndarray, 
+    channels : int
 ) -> np.ndarray:
     if len(img.shape) == 3:
         if img.shape[2] != 1:

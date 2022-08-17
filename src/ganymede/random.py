@@ -58,3 +58,22 @@ def sample(
     random_instance = provide_default_instance_if_none(random_instance)
 
     return random_instance.sample(data, len)
+
+
+def multisample(
+    data,
+    sample_len,
+    random_instance = None
+):
+    if len(data) < 1:
+        raise ValueError(f'invalid len(data) < 0:{len(data)}')
+    sample_list = []
+
+    current_len = sample_len
+    data_len    = len(data)
+    while current_len > 0:
+        current_sample_len = min(data_len, current_len)
+        sample_list += sample(data, current_sample_len, random_instance)
+        current_len -= data_len
+
+    return sample_list

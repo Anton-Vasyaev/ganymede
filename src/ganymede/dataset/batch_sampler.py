@@ -29,10 +29,13 @@ class BatchSampler:
     ):
         self.random_i = random.Random(random_seed)
 
-        max_workers = multiprocessing.cpu_count() if threads == 0 else threads
-        self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
+        self.max_workers = multiprocessing.cpu_count() if threads == 0 else threads
 
-        self.indices = list(np.arange(len(dataset_loader)))
+        self.executor = None
+        if self.max_workers != 1:
+            self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers)
+
+        self.indices = np.arange(len(dataset_loader)).tolist()
 
         self.dataset_loader = dataset_loader
         self.batch_size     = batch_size
@@ -57,6 +60,26 @@ class BatchSampler:
 
         selected_indices = self.indices[start:end]
 
+        if self.max_workers == 1:
+            return self.current_thread_getitem(selected_indices)
+        else:
+            return self.threadpool_getitem(selected_indices)
+
+
+    def current_thread_getitem(self, indices):
+        images_list = []
+        target_list = []
+
+        for idx in indices:
+            img, target = load_img_and_target_thread_func(self.dataset_loader, idx)
+
+            images_list.append(img)
+            target_list.append(target)
+
+        return images_list, target_list
+        
+
+    def threadpool_getitem(self, indices):
         images_list = []
         target_list = []
 
@@ -65,7 +88,7 @@ class BatchSampler:
                 load_img_and_target_thread_func, 
                 self.dataset_loader, 
                 ind,
-            ) : ind for ind in selected_indices
+            ) : ind for ind in indices
         }
 
         for future in concurrent.futures.as_completed(future_to_img):

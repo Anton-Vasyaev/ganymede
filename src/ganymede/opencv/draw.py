@@ -4,7 +4,7 @@ from copy import deepcopy
 import cv2   as cv
 import numpy as np
 # project
-from ganymede.draw.data import DrawCanvas
+from ganymede.draw.data import *
 
 from ganymede.math.system_coord_transformer import SystemCoordTransformer
 
@@ -185,28 +185,32 @@ def draw_canvas(
         [0.0, 0.0, 1.0, 1.0]
     )
 
-    shapes = canvas.shapes
-
-    # Draw lines
-    for l_data in shapes.draw_lines:
-        transform_line = coord_t.transform_line(l_data.line)
-        p1, p2         = transform_line
-        draw_line(img, p1, p2, l_data.color, l_data.thickness)
-
-    # Draw lines
-    points = shapes.draw_points
-    for p_data in points:
-        transform_point = coord_t.transform_point(p_data.point)
-        draw_point(img, transform_point, p_data.color, p_data.radius - 1, p_data.radius)
-
-    # Draw polygons
-    draw_polygons = shapes.draw_polygons
-    for poly_data in draw_polygons:
-        transform_poly = coord_t.transform_polygon(poly_data.polygon)
-        draw_polygon(img, transform_poly, poly_data.color, poly_data.thickness)
-
-    # Draw bboxes
-    draw_bboxes = shapes.draw_bboxes
-    for bbox_data in draw_bboxes:
-        transform_bbox = coord_t.transform_bbox(bbox_data.bbox)
-        draw_bbox(img, transform_bbox, bbox_data.color, bbox_data.thickness)
+    for draw_shape in canvas.shapes:
+        if isinstance(draw_shape, DrawLine):
+            l_data : DrawLine = draw_shape
+            transform_line = coord_t.transform_line(l_data.line)
+            p1, p2         = transform_line
+            draw_line(img, p1, p2, l_data.color, l_data.thickness)
+        
+        elif isinstance(draw_shape, DrawPoint):
+            p_data : DrawPoint = draw_shape
+            transform_point = coord_t.transform_point(p_data.point)
+            draw_point(img, transform_point, p_data.color, p_data.radius - 1, p_data.radius)
+        
+        elif isinstance(draw_shape, DrawPolygon):
+            poly_data : DrawPolygon = draw_shape
+            transform_poly = coord_t.transform_polygon(poly_data.polygon)
+            draw_polygon(img, transform_poly, poly_data.color, poly_data.thickness)
+        
+        elif isinstance(draw_shape, DrawBBox):
+            bbox_data : DrawBBox = draw_shape
+            transform_bbox = coord_t.transform_bbox(bbox_data.bbox)
+            draw_bbox(img, transform_bbox, bbox_data.color, bbox_data.thickness)
+        
+        elif isinstance(draw_shape, FillPolygon):
+            poly_data : FillPolygon = draw_shape
+            transform_poly = coord_t.transform_polygon(poly_data.polygon)
+            fill_polygon(img, transform_poly, poly_data.color)
+        
+        else:
+            raise ValueError(f'unknown draw shape type:{type(draw_shape)}')

@@ -31,7 +31,7 @@ class OneClassSegmentationDetector:
         self.activation = activation
 
 
-    def detect(self, img):
+    def detect(self, img : np.ndarray) -> np.ndarray:
         img_h, img_w = img.shape[0:2]
 
         in_w, in_h = self.input_size
@@ -55,7 +55,7 @@ class OneClassSegmentationDetector:
 
             output = g_tensor.tensor_batch_to_img_list(output)[0]
 
-            output = (output > self.threshold).astype(np.float32)
+            output = (output > self.threshold).astype(np.uint8) * 255
 
             output = cv.resize(output, (img_w, img_h), interpolation=cv.INTER_NEAREST)
 

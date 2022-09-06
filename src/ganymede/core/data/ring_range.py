@@ -2,7 +2,7 @@ from __future__ import annotations
 # 3rd party
 from nameof import nameof
 # project
-from .arithmetic import ring_add
+from ..arithmetic import ring_add
 
 
 class RingRangeIterator:

@@ -9,6 +9,7 @@ class BinaryPackageReader:
 
         self.byteorder = byteorder
 
+
     def read_bytes(self, count):
         bin_slice = self.bin[self.cur_pos:self.cur_pos + count]
         self.cur_pos += count
@@ -22,16 +23,36 @@ class BinaryPackageReader:
         return int.from_bytes(bin_slice, byteorder=self.byteorder)
 
 
-    def read_uint8(self): return self.read_int(1, signed=False)
+    def read_uint8(self): 
+        return self.read_int(1, signed=False)
 
 
-    def read_uint16(self): return self.read_int(2, signed=False)
+    def read_int8(self):
+        return self.read_int(1, signed=True)
 
 
-    def read_uint32(self): return self.read_int(4, signed=False)
+    def read_uint16(self): 
+        return self.read_int(2, signed=False)
 
     
-    def read_uint64(self): return self.read_int(8, signed=False)
+    def read_int16(self):
+        return self.read_int(2, signed=True)
+
+
+    def read_uint32(self): 
+        return self.read_int(4, signed=False)
+
+
+    def read_int32(self):
+        return self.read_int(4, signed=True)
+
+    
+    def read_uint64(self): 
+        return self.read_int(8, signed=False)
+
+    
+    def read_int64(self):
+        return self.read_int(8, signed=True)
 
 
     def read_float32(self):

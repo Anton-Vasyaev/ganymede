@@ -8,8 +8,6 @@ from ganymede.math.poly2      import Polygon2D
 
 
 @dataclass
-class DrawPolygon:
+class FillPolygon:
     polygon   : Polygon2D
     color     : AlgTuple3
-    thickness : float
-

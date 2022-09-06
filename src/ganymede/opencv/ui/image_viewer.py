@@ -2,7 +2,7 @@
 import ganymede.core    as g_core
 import ganymede.imaging as g_img
 
-from ganymede.draw import draw_text_list
+from ganymede.draw.text import draw_text_list
 from .funcs import imshow
 
 class ImageViewer:

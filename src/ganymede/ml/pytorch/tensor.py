@@ -4,7 +4,7 @@ import torch
 import numpy as np
 import cv2   as cv
 # project
-import ganymede.draw    as g_draw
+import ganymede.draw.text    as g_draw
 import ganymede.opencv  as g_cv
 import ganymede.imaging as g_image
 

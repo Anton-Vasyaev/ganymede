@@ -15,7 +15,7 @@ def parse_cvat_v1d1(
     xml_pathes     : List[str], 
     directory_path : str  = '.',
     exist_checking : bool = True
-) -> List[CvatImageMarkup]:
+) -> List[List[CvatImageMarkup]]:
     directory_path_p = Path(directory_path)
 
     # checking xml exist

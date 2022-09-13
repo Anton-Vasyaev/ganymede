@@ -50,7 +50,7 @@ class SystemCoordTransformer:
 
 
     def transform_polygon(self, poly : Polygon2D) -> Polygon2D:
-        transform_poly = [None] * len(poly)
+        transform_poly : Polygon2D = [None] * len(poly)
         for idx in range(len(poly)):
             poly_point      = poly[idx]
             transform_point = self.transform_point(poly_point)

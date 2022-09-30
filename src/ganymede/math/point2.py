@@ -83,10 +83,13 @@ def rotate(point, angle, anchor = (0.0, 0.0)):
     x, y = point
     x, y = x - a_x, y - a_y
 
-    x = x * cos - y * sin
-    y = x * sin + y * cos
+    rot_x = x * cos - y * sin
+    rot_y = x * sin + y * cos
 
-    return x, y
+    rot_x += a_x
+    rot_y += a_y
+
+    return rot_x, rot_y
     
 
 def perspective_transform(

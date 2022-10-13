@@ -44,6 +44,8 @@ class Darknet4Detector:
                 img = cv.cvtColor(img, cv.COLOR_GRAY2BGR)
             elif g_img.get_channels(img) == 3 and self.input_channels == 1:
                 img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+            elif g_img.get_channels(img) == 4 and self.input_channels == 1:
+                img = cv.cvtColor(img, cv.COLOR_BGRA2GRAY)
             elif g_img.get_channels(img) == 3 and self.input_channels == 3:
                 img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 

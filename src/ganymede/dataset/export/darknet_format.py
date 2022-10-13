@@ -1,7 +1,11 @@
+# python
+from typing import List
 # 3rd party
 import numpy as np
-import ganymede.opencv as g_cv
 from pathlib import Path
+# project
+import ganymede.opencv as g_cv
+from ganymede.dataset.data.bbox_object_markup import BBoxObjectMarkup
 
 
 def write_class_names(obj_file_path, class_names):
@@ -9,12 +13,13 @@ def write_class_names(obj_file_path, class_names):
         fh.writelines(class_names)
 
 
-def convert_to_yolo_objects(objects):
+def convert_to_yolo_objects(objects : List[BBoxObjectMarkup]):
     yolo_objects = []
     for object in objects:
-        bbox, class_id = object
-        x1, y1, x2, y2 = bbox
+        bbox     = object.bbox
+        class_id = object.class_id
 
+        x1, y1, x2, y2 = bbox
         x1, y1, x2, y2 = np.clip([x1, y1, x2, y2], 0.0, 1.0)
 
         w, h = x2 - x1, y2 - y1

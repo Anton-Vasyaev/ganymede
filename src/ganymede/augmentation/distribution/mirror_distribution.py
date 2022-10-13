@@ -7,8 +7,8 @@ from ..parameters.mirror_parameters import MirrorParameters
 
 @dataclass
 class MirrorDistribution:
-    horizontal : True
-    vertical   : True
+    horizontal : bool
+    vertical   : bool
 
 
     @staticmethod

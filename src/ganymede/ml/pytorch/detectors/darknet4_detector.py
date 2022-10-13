@@ -25,6 +25,7 @@ class Darknet4Detector:
         self.model.load_weights(weights_path)
         self.model.eval()
 
+        self.use_gpu = use_gpu
         if use_gpu and torch.cuda.is_available():
             device = torch.cuda.device('cuda:0')
             self.model.to(device)
@@ -51,10 +52,10 @@ class Darknet4Detector:
 
             detections = []
 
-            boxes = do_detect(self.model, img, confidence_threshold, nms_threshold, self.use_cuda)
+            boxes = do_detect(self.model, img, confidence_threshold, nms_threshold, self.use_gpu)
 
             for detection in boxes[0]:
-                x1, y1, x2, y2, object_confidence, _, class_id = detection
+                x1, y1, x2, y2, object_confidence, class_confidence, class_id = detection
 
                 x1, y1 = float(x1), float(y1)
                 x2, y2 = float(x2), float(y2)
@@ -62,11 +63,12 @@ class Darknet4Detector:
                 object_confidence = float(object_confidence)
                 class_id          = int(class_id)
 
-                detection.append(
+                detections.append(
                     ObjectDetection(
                         [x1, y1, x2, y2],
                         class_id,
-                        object_confidence
+                        object_confidence,
+                        class_confidence
                     )
                 )
 

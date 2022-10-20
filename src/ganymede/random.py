@@ -1,15 +1,23 @@
+# python
 import random
+from enum   import Enum
+from random import Random
+from typing import TypeVar, List, Type, Any
 
-def provide_default_instance_if_none(random_instance):
-    if random_instance is None: return random
+T     = TypeVar('T')
+EnumT = TypeVar('T', bound=Enum)
+
+
+def provide_default_instance_if_none(random_instance : Random) -> Random:
+    if random_instance is None: return Random(0)
     else: return random_instance
 
 
 def get_random_distance(
-    start = 0.0, 
-    end = 1.0,
-    random_instance = None
-):
+    start           : float  = 0.0, 
+    end             : float  = 1.0,
+    random_instance : Random = None
+) -> float:
     random_instance = provide_default_instance_if_none(random_instance)
 
     distance = end - start
@@ -22,9 +30,9 @@ def get_random_distance(
 
 
 def get_random_bool(
-    true_border = 0.5,
-    random_instance = None
-):
+    true_border     : float  = 0.5,
+    random_instance : Random = None
+) -> bool:
     random_instance = provide_default_instance_if_none(random_instance)
 
     val = random_instance.random()
@@ -33,41 +41,41 @@ def get_random_bool(
 
 
 def get_random_enum(
-    enum_type,
+    enum_type : Type[EnumT],
     random_instance = None
-):
+) -> EnumT:
     random_instance = provide_default_instance_if_none(random_instance)
 
     return enum_type(int(get_random_distance(0, len(enum_type))))
 
 
 def choice(
-    data,
+    data : List[T],
     random_instance = None
-):
+) -> T:
     random_instance = provide_default_instance_if_none(random_instance)
 
     return random_instance.choice(data)
 
 
 def sample(
-    data,
-    len,
-    random_instance = None
-):
+    data            : List[T],
+    len             : int,
+    random_instance : Random = None
+) -> List[T]:
     random_instance = provide_default_instance_if_none(random_instance)
 
     return random_instance.sample(data, len)
 
 
 def multisample(
-    data,
-    sample_len,
-    random_instance = None
-):
+    data            : List[T],
+    sample_len      : int,
+    random_instance : random.Random = None
+) -> List[T]:
     if len(data) < 1:
         raise ValueError(f'invalid len(data) < 0:{len(data)}')
-    sample_list = []
+    sample_list : List[T] = []
 
     current_len = sample_len
     data_len    = len(data)

@@ -1,5 +1,7 @@
-# 3rd party
+# python
+from typing      import List
 from dataclasses import dataclass
+# 3rd party
 import torch
 from pathlib import Path
 # project
@@ -16,8 +18,11 @@ class CheckpointInfo:
     accuracy    : float
 
 
-
 class TrainState:
+    train_params : TrainParameters
+    env_params   : EnvironmentParameters
+
+
     @staticmethod
     def load_from_dict(config : dict):
         train_params = TrainParameters.load_from_dict(config['train'])
@@ -47,10 +52,10 @@ class TrainState:
 
 
 
-    def _get_checkpoint(self):
+    def _get_checkpoint(self) -> List[CheckpointInfo]:
         checkpoint_dir_p = Path(self.env_params.checkpoint_path)
 
-        checkpoints = []
+        checkpoints : List[CheckpointInfo] = []
         for file_p in checkpoint_dir_p.iterdir():
             if not file_p.suffix == '.pth': continue
 
@@ -71,7 +76,7 @@ class TrainState:
     def restore_last_checkpoint(
         self, 
         model : torch.nn.Module
-    ):
+    ) -> CheckpointInfo:
         checkpoints = self._get_checkpoint()
 
         checkpoint = checkpoints[-1]
@@ -90,7 +95,7 @@ class TrainState:
         self, 
         model : torch.nn.Module, 
         idx   : int
-    ):
+    ) -> CheckpointInfo:
         checkpoints = self._get_checkpoint()
         checkpoints = [x for x in checkpoints if x.idx == idx]
 
@@ -109,7 +114,7 @@ class TrainState:
         return checkpoint_info
 
 
-    def load_model_from_argument_idx(self, model, arg_idx):
+    def load_model_from_argument_idx(self, model, arg_idx) -> CheckpointInfo:
         if arg_idx != -1:
             if arg_idx == 0:
                 return self.restore_last_checkpoint(model)

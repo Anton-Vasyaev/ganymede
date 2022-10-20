@@ -21,6 +21,26 @@ def height(bbox):
     return y2 - y1
 
 
+def left_top(bbox):
+    return bbox[0], bbox[1]
+
+
+def left_bottom(bbox):
+    return bbox[1], bbox[3]
+
+
+def right_bottom(bbox):
+    return bbox[2], bbox[3]
+
+
+def right_top(bbox):
+    return bbox[2], bbox[1]
+
+
+def from_points(left_top, right_bottom):
+    return left_top[0], left_top[1], right_bottom[0], right_bottom[1]
+
+
 def clip(
     bbox, 
     min_val, 

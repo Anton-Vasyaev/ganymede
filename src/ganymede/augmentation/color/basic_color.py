@@ -29,10 +29,12 @@ def augmentation_basic_color_img(
         img[:,:,2] *= red
     elif channels == 1:
         img *= 0.299 * red + 0.587 * green + 0.114 * blue
+    else:
+        raise Exception(f'not expected image with channels:{channels}')
 
     img = img.clip(0, mod_value)
 
     if convert_to_original_type and not np.issubdtype(dtype, np.floating):
         img = img.astype(dtype)
-        
+
     return img

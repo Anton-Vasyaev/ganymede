@@ -1,14 +1,13 @@
 # python
 from dataclasses import dataclass
+# project
+from ganymede.math.bbox import BBox
 
 
 @dataclass
 class CvatBoxShape:
     label : str
-    xtl   : float
-    ytl   : float
-    xbr   : float
-    ybr   : float
+    box   : BBox
 
 
     @staticmethod
@@ -22,7 +21,7 @@ class CvatBoxShape:
         xbr   = float(root.get('xbr')) / norm_w
         ybr   = float(root.get('ybr')) / norm_h
 
-        return CvatBoxShape(label, xtl, ytl, xbr, ybr)
+        return CvatBoxShape(label, (xtl, ytl, xbr, ybr))
 
 
     @staticmethod

@@ -1,12 +1,15 @@
 # python
 from dataclasses import dataclass
+from typing import List
 # project
-from .auxiliary import load_label_and_points_from_xml
+from .auxiliary           import load_label_and_points_from_xml
+from ganymede.math.point2 import Point2D
+
 
 @dataclass
 class CvatPolygonShape:
     label : str
-    points : str
+    points : List[Point2D]
     
     @staticmethod
     def load_from_xml(

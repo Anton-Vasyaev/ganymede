@@ -2,6 +2,7 @@
 import math
 from typing import Tuple
 # project
+from .functions import clip
 
 
 Point2D = Tuple[float, float]
@@ -106,3 +107,11 @@ def perspective_transform(
     y = yt / t
     
     return x, y
+
+
+def clip_bbox(point, bbox):
+    x, y = point
+
+    l, t, r, b = bbox
+
+    return clip(x, l, r), clip(y, t, b)

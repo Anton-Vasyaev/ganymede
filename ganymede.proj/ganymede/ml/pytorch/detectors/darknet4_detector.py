@@ -61,6 +61,9 @@ class Darknet4Detector:
 
                 x1, y1 = float(x1), float(y1)
                 x2, y2 = float(x2), float(y2)
+                
+                # ToDo
+                print(f'width:{x2 - x1}, height:{y2 - y1}')
 
                 object_confidence = float(object_confidence)
                 class_id          = int(class_id)

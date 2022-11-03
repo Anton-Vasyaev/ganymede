@@ -1,4 +1,4 @@
-def is_none_or_empty(str_data, argument_name):
+def is_none_or_empty(str_data : str, argument_name : str):
     valid = True
     if str_data is None: raise Exception(
         f'str argument \'{argument_name}\' was None'

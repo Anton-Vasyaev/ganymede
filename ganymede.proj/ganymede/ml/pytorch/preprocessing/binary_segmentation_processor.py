@@ -49,6 +49,7 @@ class BinarySegmentationProcessor:
             if not process_result is None: img_t = process_result
 
         mask_t = g_tensor.img_list_to_tensor_batch(new_mask_list, normalized=True)
-        mask_t[mask_t > 0.01] = 1.0
+        mask_t[mask_t >= 0.05] = 1.0
+        mask_t[mask_t <  0.05] = 0.0
 
         return img_t, mask_t

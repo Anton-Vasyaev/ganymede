@@ -1,7 +1,7 @@
 # python
 import json
 
-def load_from_file(path):
+def load_from_file(path : str) -> dict:
     if not type(path) is str:
         path = str(path)
 
@@ -12,7 +12,12 @@ def load_from_file(path):
     return data
 
 
-def write_to_file(data, path, indent=None, encoding='utf-8'):
+def write_to_file(
+    data     : dict, 
+    path     : str, 
+    indent   : int = None,
+    encoding = 'utf-8'
+):
     if not type(path) is str:
         path = str(path)
 

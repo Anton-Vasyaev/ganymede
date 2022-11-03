@@ -11,7 +11,7 @@ def augmentation_basic_color_img(
     blue                     : float,
     normalize_floating       : bool = True,
     convert_to_original_type : bool = True
-):
+) -> np.ndarray:
     dtype = img.dtype
 
     mod_value = None

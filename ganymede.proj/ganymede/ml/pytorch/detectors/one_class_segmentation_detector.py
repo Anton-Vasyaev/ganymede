@@ -45,6 +45,8 @@ class OneClassSegmentationDetector:
                 img = cv.cvtColor(img, cv.COLOR_GRAY2BGR)
             elif g_img.get_channels(img) == 3 and self.in_channels == 1:
                 img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+            elif g_img.get_channels(img) == 4 and self.in_channels == 1:
+                img = cv.cvtColor(img, cv.COLOR_BGRA2GRAY)
             elif g_img.get_channels(img) == 3 and self.in_channels == 3:
                 img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 

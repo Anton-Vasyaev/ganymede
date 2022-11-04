@@ -1,74 +1,81 @@
 # python
-from typing  import Tuple
+from typing  import Union, Tuple, cast
 from numbers import Number
 # project
 import ganymede.math.auxiliary as m_aux
 import ganymede.math.point2    as m_p2
+from .primitives import BBox2, Point2, Size2
 
 
-BBox = Tuple[float, float, float, float]
-
-
-def width(bbox):
+def width(bbox : BBox2) -> float:
     x1, y1, x2, y2 = bbox
 
     return x2 - x1
 
 
-def height(bbox):
+def height(bbox : BBox2) -> float:
     x1, y1, x2, y2 = bbox
 
     return y2 - y1
 
 
-def left_top(bbox):
+def left_top(bbox : BBox2) -> Point2:
     return bbox[0], bbox[1]
 
 
-def left_bottom(bbox):
+def left_bottom(bbox : BBox2) -> Point2:
     return bbox[1], bbox[3]
 
 
-def right_bottom(bbox):
+def right_bottom(bbox : BBox2) -> Point2:
     return bbox[2], bbox[3]
 
 
-def right_top(bbox):
+def right_top(bbox : BBox2) -> Point2:
     return bbox[2], bbox[1]
 
 
-def from_points(left_top, right_bottom):
+def from_points(left_top : Point2, right_bottom : Point2) -> BBox2:
     return left_top[0], left_top[1], right_bottom[0], right_bottom[1]
 
 
 def clip(
-    bbox, 
-    min_val, 
-    max_val
+    bbox    : BBox2, 
+    min_val : Union[float, Size2], 
+    max_val : Union[float, Size2]
 ):
     if isinstance(min_val, Number):
-        min_w, min_h = min_val, min_val
-        max_w, max_h = max_val, max_val
+        min_val_num = cast(float, min_val)
+        max_val_num = cast(float, max_val)
+        min_w, min_h = min_val_num, min_val_num
+        max_w, max_h = max_val_num, max_val_num
     else:
-        min_w, min_h = min_val
-        max_w, max_h = max_val
+        min_val_size = cast(Size2, min_val)
+        max_val_size = cast(Size2, max_val)
+        min_w, min_h = min_val_size
+        max_w, max_h = max_val_size
 
-    min_w, min_h = min_val, min_val if isinstance(min_val, Number) else min_val
-    max_w, max_h = max_val, max_val if isinstance(max_val, Number) else max_val
 
     x1, y1, x2, y2 = bbox
 
-    x1, y1 = m_aux.clip(x1, min_w, max_w), m_aux.clip(y1, min_h, max_h)
-    x2, y2 = m_aux.clip(x2, min_w, max_w), m_aux.clip(y2, min_h, max_h)
+    x1 = cast(float, m_aux.clip(x1, min_w, max_w))
+    y1 = cast(float, m_aux.clip(y1, min_h, max_h))
+
+    x2 = cast(float, m_aux.clip(x2, min_w, max_w))
+    y2 = cast(float, m_aux.clip(y2, min_h, max_h))
 
     return x1, y1, x2, y2
 
 
-def scale(bbox, scale_size):
+def scale(
+    bbox       : BBox2, 
+    scale_size : Union[float, Size2]
+):
     if isinstance(scale_size, Number):
-        scale_w, scale_h = scale_size, scale_size
+        scale_w, scale_h = cast(float, scale_size), cast(float, scale_size)
     else:
-        scale_w, scale_h = scale_size
+        scale_size_s = cast(Size2, scale_size)
+        scale_w, scale_h = scale_size_s
 
     x1, y1, x2, y2 = bbox
     w, h           = x2 - x1, y2 - y1
@@ -83,19 +90,19 @@ def scale(bbox, scale_size):
     return [x1, y1, x2, y2]
 
 
-def area(bbox):
+def area(bbox : BBox2) -> float:
     l, t, r, b = bbox
 
     return abs(r - l) * abs(b - t)
 
 
-def center(bbox):
+def center(bbox : BBox2) -> Point2:
     l, t, r, b = bbox
 
     return (l + r) / 2, (t + b) / 2
 
 
-def iom(v, z):
+def iom(v : BBox2, z : BBox2) -> float:
     vx1, vy1, vx2, vy2 = v
     zx1, zy1, zx2, zy2 = z
 
@@ -115,7 +122,7 @@ def iom(v, z):
     return inter_area / min_area
     
 
-def corner_points(bbox):
+def corner_points(bbox : BBox2) -> Tuple[Point2, Point2, Point2, Point2]:
     x1, y1, x2, y2 = bbox
 
     return [

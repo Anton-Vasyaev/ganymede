@@ -1,11 +1,11 @@
 # python
 from dataclasses import dataclass
 # 3rd party
-import cv2 as cv
+import cv2 as cv # type: ignore
 # project
 from ganymede.augmentation.parameters.i_augmentation_parameters import IAugmentationParameters
-from ganymede.augmentation import AugmentationData
-from ganymede.augmentation.transformation.padding import augmentate_padding
+from ganymede.augmentation.augmentation_data import AugmentationData
+from ganymede.augmentation.function.transform.padding import augmentate_padding
 
 
 @dataclass

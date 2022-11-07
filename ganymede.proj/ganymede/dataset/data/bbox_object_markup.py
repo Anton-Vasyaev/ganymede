@@ -1,10 +1,10 @@
 # python
 from dataclasses import dataclass
 # project
-from ganymede.math.bbox import BBox
+from ganymede.math.primitives import BBox2
 
 
 @dataclass
 class BBoxObjectMarkup:
-    bbox     : BBox
+    bbox     : BBox2
     class_id : int

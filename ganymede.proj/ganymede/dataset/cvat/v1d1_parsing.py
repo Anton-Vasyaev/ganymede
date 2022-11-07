@@ -1,9 +1,8 @@
 # python
 import os
 import xml.etree.ElementTree as ET
-from typing import List
+from typing import List, Any, cast
 # 3rd party
-import cv2 as cv
 from pathlib import Path
 
 from .cvat_image_markup import CvatImageMarkup
@@ -27,30 +26,32 @@ def parse_cvat_v1d1(
     task_list = []
     for xml_path in xml_pathes:
         root = ET.parse(xml_path).getroot()
+        if root is None:
+            raise Exception(f'Cannot parse xml:{xml_path}')
 
-        task_name = root.find('meta').find('task').find('name').text
+        task_name = cast(str, root.find('meta').find('task').find('name').text)
 
         data_list = []
         images = root.findall('image')
         for img in images:
-            img_id   = int(img.get('id'))
-            img_path = img.get('name')
-            img_w    = int(img.get('width'))
-            img_h    = int(img.get('height'))
+            img_id   = int(cast(Any, img.get('id')))
+            img_path = str(cast(Any, img.get('name')))
+            img_w    = int(cast(Any, img.get('width')))
+            img_h    = int(cast(Any, img.get('height')))
 
             img_path_p = directory_path_p / img_path
 
-            polylines = img.findall('polyline')
-            polylines = CvatPolyLineShape.load_from_xml_list(polylines, (img_w, img_h))
+            polylines_el = img.findall('polyline')
+            polylines = CvatPolyLineShape.load_from_xml_list(polylines_el, (img_w, img_h))
 
-            polygons = img.findall('polygon')
-            polygons = CvatPolygonShape.load_from_xml_list(polygons, (img_w, img_h))
+            polygons_el = img.findall('polygon')
+            polygons = CvatPolygonShape.load_from_xml_list(polygons_el, (img_w, img_h))
 
-            points = img.findall('points')
-            points = CvatPointsShape.load_from_xml_list(points, (img_w, img_h))
+            points_el = img.findall('points')
+            points = CvatPointsShape.load_from_xml_list(points_el, (img_w, img_h))
 
-            boxes = img.findall('box')
-            boxes = CvatBoxShape.load_from_xml_list(boxes, (img_w, img_h))
+            boxes_el = img.findall('box')
+            boxes = CvatBoxShape.load_from_xml_list(boxes_el, (img_w, img_h))
 
             if exist_checking:
                 if not img_path_p.exists():

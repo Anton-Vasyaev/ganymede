@@ -1,7 +1,8 @@
 # python
 from abc import abstractmethod
+from dataclasses import dataclass
 # 3rd party
-import cv2 as cv
+import cv2 as cv # type: ignore
 # project
 from ganymede.augmentation.augmentation_data import AugmentationData
 

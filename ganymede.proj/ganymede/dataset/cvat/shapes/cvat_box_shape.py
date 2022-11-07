@@ -1,13 +1,14 @@
 # python
 from dataclasses import dataclass
+from typing import List
 # project
-from ganymede.math.bbox import BBox
+from ganymede.math.primitives import BBox2
 
 
 @dataclass
 class CvatBoxShape:
     label : str
-    box   : BBox
+    box   : BBox2
 
 
     @staticmethod
@@ -29,7 +30,7 @@ class CvatBoxShape:
         roots,
         normalize_size = (1.0, 1.0)
     ):
-        boxes_list = []
+        boxes_list : List[CvatBoxShape] = []
         for root in roots:
             boxes_list.append(CvatBoxShape.load_from_xml(root, normalize_size))
 

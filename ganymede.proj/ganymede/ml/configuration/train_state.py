@@ -60,9 +60,9 @@ class TrainState:
             if not file_p.suffix == '.pth': continue
 
             file_name = file_p.stem
-            idx, accuracy = file_name.split('_')[-2:]
-            idx      = int(idx)
-            accuracy = float(accuracy)
+            idx_str, accuracy_str = file_name.split('_')[-2:]
+            idx      = int(idx_str)
+            accuracy = float(accuracy_str)
 
             checkpoints.append(
                 CheckpointInfo(str(file_p), idx, accuracy)

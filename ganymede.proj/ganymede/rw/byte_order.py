@@ -1,8 +1,6 @@
 # python
 from enum import IntEnum
 
-from ganymede.augmentation.transformation import augmentation_padding
-
 
 class ByteOrder(IntEnum):
     LITTLE = 0,

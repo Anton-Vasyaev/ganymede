@@ -1,7 +1,13 @@
+# python
+from typing import List, cast
 # 3rd party 
 import torch
 
-def bdcn_loss2(inputs, targets, l_weight=1.1):
+def bdcn_loss2(
+    inputs : torch.Tensor, 
+    targets : torch.Tensor, 
+    l_weight : float =1.1
+) -> torch.Tensor:
     # bdcn loss with the rcf approach
     targets = targets.long()
     # mask = (targets > 0.1).float()
@@ -21,14 +27,26 @@ def bdcn_loss2(inputs, targets, l_weight=1.1):
 
 
 class BDCNLossCriterion:
-    def __init__(self, weights):
+    weights : List[float]
+
+
+    def __init__(
+        self, 
+        weights : List[float]
+    ):
         self.weights = weights
 
 
-    def __call__(self, preds, target):
+    def __call__(
+        self, 
+        preds  : torch.Tensor, 
+        target : torch.Tensor
+    ) -> torch.Tensor:
         if len(preds) != len(self.weights):
             raise Exception(f'len of output({len(preds)}) != len of weights ({len(self.weights)}')
         
-        return sum(
+        sum_result = sum(
             [ bdcn_loss2(pred, target, w) for pred, w in zip(preds, self.weights)]
-        )
+        ) / len(preds)
+
+        return cast(torch.Tensor, sum_result)

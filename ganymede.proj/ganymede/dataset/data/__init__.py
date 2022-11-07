@@ -1,1 +1,1 @@
-from .bbox_object_markup import BBoxObjectMarkup
+from .bbox_object_markup import *

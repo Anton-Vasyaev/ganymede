@@ -6,6 +6,10 @@ from ..arithmetic import ring_add
 
 
 class RingRangeIterator:
+    cursor : int
+    end    : int
+    length : int
+
     def __init__(
         self, 
         start   : int,
@@ -46,6 +50,8 @@ class RingRangeIterator:
 
         if val == self.end:
             raise StopIteration()
+
+        return val
 
 
 

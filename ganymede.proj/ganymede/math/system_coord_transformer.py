@@ -1,3 +1,5 @@
+# python
+from typing import cast
 # project
 import ganymede.math.bbox2 as m_bbox2
 import ganymede.math.line2 as m_line2
@@ -45,7 +47,7 @@ class SystemCoordTransformer:
         return m_line2.from_points(tp1, tp2)
 
     def transform_polygon(self, poly: Polygon2) -> Polygon2:
-        transform_poly: Polygon2 = [Point2()] * len(poly)
+        transform_poly  = cast(Polygon2, [None] * len(poly))
         for idx in range(len(poly)):
             poly_point = poly[idx]
             transform_point = self.transform_point(poly_point)

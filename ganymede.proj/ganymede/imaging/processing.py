@@ -3,6 +3,8 @@ from typing import Tuple
 # 3rd party
 import cv2 as cv
 import numpy as np
+# proejct
+from ganymede.math.primitives import BBox2
 
 
 def create_channel_if_not_exist(img : np.ndarray) -> None:
@@ -39,8 +41,8 @@ def drop_alpha_channel(img : np.ndarray, check_alpha = False) -> np.ndarray:
 
 
 def roi_bbox(
-    img        : np.ndarray, 
-    roi_coords : list, 
+    img  : np.ndarray, 
+    bbox : BBox2, 
     normalized : bool = True
 ) -> np.ndarray:
     img_h, img_w = img.shape[0:2]
@@ -48,7 +50,7 @@ def roi_bbox(
     x_max = 1.0
     y_max = 1.0
 
-    left, top, right, bottom = roi_coords
+    left, top, right, bottom = bbox
 
     if not normalized: x_max, y_max = x_max * img_w, y_max * img_h
 
@@ -70,16 +72,3 @@ def roi_bbox(
     right, bottom = int(right), int(bottom)
 
     return img[top:bottom, left:right]
-
-
-def roi_rect(
-    img        : np.ndarray,
-    roi_coords : list,
-    normalized : bool = True
-) -> np.ndarray:
-    x1, y1, w, h = roi_coords
-
-    x2, y2 = x1 + w, y1 + h
-
-    return roi_bbox(img, [x1, y1, x2, y2], normalized)
-

@@ -3,7 +3,7 @@ import os
 from typing import Tuple
 # 3rd party
 import numpy as np
-import cv2 as cv
+import cv2 as cv # type: ignore
 
 
 class CvVideoReader:

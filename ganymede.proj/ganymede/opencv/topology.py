@@ -1,6 +1,10 @@
+# python
+from typing import List
 # 3rd party
-import cv2   as cv
+import cv2   as cv # type: ignore
 import numpy as np
+# project
+from ganymede.math.primitives import Line2, Polygon2
 
 
 def hough_lines_p(
@@ -10,7 +14,7 @@ def hough_lines_p(
     threshold       : int, 
     min_line_length : int = 0,
     max_line_gap    : int = 0
-):
+) -> List[Line2]:
     img_h, img_w = img.shape[0:2]
 
     lines = cv.HoughLinesP(
@@ -18,12 +22,11 @@ def hough_lines_p(
         rho, 
         theta, 
         threshold, 
-        lines, 
         min_line_length, 
         max_line_gap
     )
 
-    new_lines = []
+    new_lines : List[Line2] = []
     for line in lines:
         line = line[0]
 
@@ -36,7 +39,7 @@ def hough_lines_p(
         x1, y1 = x1 / img_w, y1 / img_h
         x2, y2 = x2 / img_w, y2 / img_h
 
-        new_lines.append(((x1, y1), (x2, y2)))
+        new_lines.append((x1, y1, x2, y2))
 
     return new_lines
 
@@ -45,7 +48,7 @@ def find_contours(
     img    : np.ndarray, 
     mode   : int, 
     method : int
-):
+) -> List[Polygon2]:
     img_h, img_w = img.shape[0:2]
     contours, hierarchy = cv.findContours(img, mode, method)
 
@@ -62,5 +65,5 @@ def find_contours(
 
         new_contours.append(new_contour)
 
-    return new_contours, hierarchy
+    return new_contours
     

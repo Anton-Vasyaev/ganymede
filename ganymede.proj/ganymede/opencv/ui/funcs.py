@@ -1,7 +1,7 @@
 # python 
 from typing import List, Tuple
-# 3rd party
-import cv2   as cv
+# 3rd party 
+import cv2   as cv # type: ignore
 import numpy as np
 
 

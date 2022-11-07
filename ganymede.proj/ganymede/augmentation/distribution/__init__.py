@@ -1,8 +1,3 @@
-from .augmentation_distribution import AugmentationDistribution
-
-from .basic_color_distribution import BasicColorDistribution
-from .mirror_distribution      import MirrorDistribution
-from .padding_distribution     import PaddingDistribution
-from .rotate2d_distribution    import Rotate2dDistribution
-from .rotate3d_distribution    import Rotate3dDistribution
-from .stretch_distribution     import StretchDistribution
+from ganymede.augmentation.distribution.color import *
+from ganymede.augmentation.distribution.transform import *
+from ganymede.augmentation.distribution.i_augmentation_distribution import IAugmentationDistribution

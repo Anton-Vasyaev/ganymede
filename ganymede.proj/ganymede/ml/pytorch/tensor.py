@@ -44,10 +44,10 @@ def tensor_batch_to_img_batch(tensor : torch.Tensor) -> np.ndarray:
     return img
 
 
-def tensor_batch_to_img_list(tensor : torch.Tensor) -> np.ndarray:
+def tensor_batch_to_img_list(tensor : torch.Tensor) -> List[np.ndarray]:
     img_batch = tensor_batch_to_img_batch(tensor)
 
-    new_list = []
+    new_list : List[np.ndarray] = []
     for img in img_batch:
         new_list.append(img)
 
@@ -76,7 +76,7 @@ def visualise_batch(
             for map_idx in range(img.shape[2]):
                 map = img[...,map_idx]
                 g_image.create_channel_if_not_exist(map)
-                map = g_image.cast_one_channel_img(map)
+                map = g_image.cast_one_channel_img(map, 3)
 
                 g_draw.draw_text_list(
                     map,

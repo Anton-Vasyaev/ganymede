@@ -1,7 +1,7 @@
 # python
 from typing import Tuple, cast
 # 3rd party
-import cv2 as cv
+import cv2 as cv # type: ignore
 import numpy as np
 # project
 from ganymede.opencv.data import CvPerspective
@@ -39,13 +39,9 @@ def warp_perspective_on_keypoints(
     if output_size is None:
         output_size = (img_w, img_h)
 
-    src_points = np.float32(
-        cast(np.floating, src_points)
-    ) * np.float32(cast(np.floating, (img_w, img_h)))
+    src_points = np.float32(src_points) * np.float32((img_w, img_h)) # type: ignore
 
-    dst_points = np.float32(
-        cast(np.floating, dst_points)
-    ) * np.float32(cast(np.floating, output_size))
+    dst_points = np.float32(dst_points) * np.float32(output_size) # type: ignore
 
     transform = cv.getPerspectiveTransform(src_points, dst_points)
     img = cv.warpPerspective(img, transform, output_size, flags=interpolation)

@@ -1,13 +1,13 @@
 # python
 from dataclasses import dataclass
 # 3rd party
-import cv2 as cv
+import cv2 as cv # type: ignore
 # project
-from ganymede.augmentation.parameters.transform.stretch_orientation import StretchOrientation
-from ganymede.augmentation.parameters.transform.stretch_type import StretchType
-from ganymede.augmentation.parameters import IAugmentationParameters
-from ganymede.augmentation import AugmentationData
-from ganymede.augmentation.transformation.stretch import augmentate_stretch
+from ganymede.augmentation.function.transform.stretch_data.stretch_orientation import StretchOrientation
+from ganymede.augmentation.function.transform.stretch_data.stretch_type import StretchType
+from ganymede.augmentation.parameters.i_augmentation_parameters import IAugmentationParameters
+from ganymede.augmentation.augmentation_data import AugmentationData
+from ganymede.augmentation.function.transform.stretch import augmentate_stretch
 
 
 @dataclass

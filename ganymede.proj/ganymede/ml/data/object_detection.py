@@ -1,12 +1,12 @@
 # python
 from dataclasses import dataclass
 # project
-from ganymede.math.bbox import BBox
+from ganymede.math.primitives import BBox2
 
 
 @dataclass
 class ObjectDetection:
-    bbox                : BBox
+    bbox                : BBox2
     class_id            : int
     object_confidence   : float
     class_confidence    : float

@@ -16,6 +16,17 @@ def dexined_gray_input_processor(input_t):
     input_t -= np.array(SUBSTRACT_CHANNELS_VALUES).mean()
 
 
+def dexined_input_processor(input_t):
+    channels = int(input_t.shape[1])
+
+    if channels == 1:
+        dexined_gray_input_processor(input_t)
+    elif channels == 3:
+        dexined_rgb_input_processor(input_t)
+    else:
+        raise Exception(f'Unknown numbers of channels for dexined input:{channels}.')
+
+
 DEXINED_INPUT_PROCESSORS = {
     1 : dexined_gray_input_processor,
     3 : dexined_rgb_input_processor

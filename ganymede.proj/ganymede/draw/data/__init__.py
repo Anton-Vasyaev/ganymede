@@ -1,9 +1,7 @@
-from .draw_bbox    import DrawBBox
-from .draw_line    import DrawLine
-from .draw_point   import DrawPoint
-from .draw_polygon import DrawPolygon
-from .fill_polygon import FillPolygon
+from .draw_bbox_shape    import *
+from .draw_line_shape    import *
+from .draw_point_shape   import *
+from .draw_polygon_shape import *
+from .fill_polygon_shape import *
 
-from .draw_shapes import DrawShapes
-
-from .draw_canvas import DrawCanvas
+from .draw_canvas import *

@@ -1,21 +1,25 @@
 # python
 from copy import deepcopy
+from typing import List, cast
 # 3rd party
-import cv2   as cv
+import cv2   as cv # type: ignore
 import numpy as np
 # project
+import ganymede.math.line2 as m_line2
+import ganymede.math.bbox2 as m_bbox2
 from ganymede.draw.data import *
+from ganymede.math.primitives import BBox2, Point2, Line2, AlgTuple3
 
 from ganymede.math.system_coord_transformer import SystemCoordTransformer
 
 
 
-def draw_point(
-    img,
-    coord,
-    color,
-    radius    = 2,
-    thickness = 2,
+def draw_circle(
+    img : np.ndarray,
+    coord : Point2,
+    color : AlgTuple3,
+    radius : int = 1,
+    thickness : int = 1,
     normalize_coords = True
 ):
     r, g, b = color
@@ -30,15 +34,15 @@ def draw_point(
     r, g, b = color
 
     cv.circle(img, (x, y), radius, color, thickness)
-    
-    
-def draw_line(
-    img,
-    p1,
-    p2,
-    color,
-    thickness        = 2,
-    normalize_coords = True
+
+
+def draw_line_p(
+    img : np.ndarray,
+    p1 : Point2,
+    p2 : Point2,
+    color : AlgTuple3,
+    thickness : int = 1,
+    normalize_coords : bool = True
 ):
     r, g, b = color
     color   = (b, g, r)
@@ -56,15 +60,29 @@ def draw_line(
     x2, y2 = int(x2), int(y2)
 
     cv.line(img, (x1, y1), (x2, y2), color, thickness)
+
+
+def draw_line(
+    img : np.ndarray,
+    line : Line2,
+    color : AlgTuple3,
+    thickness : int = 1,
+    normalize_coords : bool = True
+):
+    p1 = m_line2.first(line)
+    p2 = m_line2.second(line)
+
+    draw_line_p(img, p1, p2, color, thickness, normalize_coords)
+
     
     
-def draw_rectangle_p(
-    img,
-    p1,
-    p2,
-    color,
-    thickness = 2,
-    normalize_coords = True
+def draw_bbox_p(
+    img : np.ndarray,
+    p1 : Point2,
+    p2 : Point2,
+    color : AlgTuple3,
+    thickness : int = 1,
+    normalize_coords : bool = True
 ):
     r, g, b = color
     color   = (b, g, r)
@@ -84,37 +102,25 @@ def draw_rectangle_p(
     cv.rectangle(img, (x1, y1), (x2, y2), color, thickness)
 
 
-def draw_rectangle(
-    img,
-    rectangle,
-    color,
-    thickness = 2,
-    normalize_coords = True
-):
-    x1, y1, w, h = rectangle
-    x2, y2 = x1 + w, y1 + h
-
-    draw_rectangle_p(img, (x1, y1), (x2, y2), color, thickness, normalize_coords)
-
-
 def draw_bbox(
-    img,
-    bbox,
-    color,
-    thickness = 2,
-    normalize_coords = True
+    img : np.ndarray,
+    box : BBox2,
+    color : AlgTuple3,
+    thickness : int = 1,
+    normalize_coords : bool = True
 ):
-    x1, y1, x2, y2 = bbox
+    p1 = m_bbox2.left_top(box)
+    p2 = m_bbox2.right_bottom(box)
 
-    draw_rectangle_p(img, (x1, y1), (x2, y2), color, thickness, normalize_coords)
+    draw_bbox_p(img, p1, p2, color, thickness, normalize_coords)
 
 
 def draw_polyline(
-    img,
-    coords,
-    color,
-    thickness = 1,
-    normalized_coords = True
+    img : np.ndarray,
+    coords : List[Point2],
+    color : AlgTuple3,
+    thickness : int = 1,
+    normalized_coords : bool = True
 ):
     r, g, b = color
     color   = b, g, r
@@ -140,39 +146,44 @@ def draw_polyline(
         
         
 def draw_polygon(
-    img,
-    coords,
-    color,
-    thickness=1,
-    normalize_coords = True
+    img : np.ndarray,
+    coords : List[Point2],
+    color : AlgTuple3,
+    thickness : int = 1,
+    normalized_coords : bool = True
 ):
-    coords = deepcopy(coords)
-    coords = list(coords) if type(coords) != list else coords
-      
-    coords.append(coords[0])
+    draw_polyline(img, coords, color, thickness, normalized_coords)
 
-    draw_polyline(img, coords, color, thickness, normalize_coords)
+    p1 = coords[0]
+    p2 = coords[-1]
+
+    draw_line_p(img, p1, p2, color, thickness, normalized_coords)
     
 
 def fill_polygon(
-    img,
-    coords,
-    color,
-    normalized_coords = True
+    img : np.ndarray,
+    coords : List[Point2],
+    color : AlgTuple3,
+    normalized_coords : bool = True
 ):
     r, g, b = color
     color   = b, g, r
 
     img_h, img_w = img.shape[0:2]
 
-    coords = np.array(coords)
+    np_coords = np.array(coords)
 
     if normalized_coords:
-        coords[:, 0] *= img_w
-        coords[:, 1] *= img_h
-    coords = np.array([coords], dtype=np.int32)
+        np_coords[:, 0] *= img_w
+        np_coords[:, 1] *= img_h
 
-    cv.fillPoly(img, coords, color)
+    np_coords.shape = (1,) + np_coords.shape
+
+    np_coords = np.int32(np_coords)
+
+    # ToDo
+
+    cv.fillPoly(img, np_coords, color)
 
 
 
@@ -182,35 +193,40 @@ def draw_canvas(
 ):
     coord_t = SystemCoordTransformer(
         canvas.canvas_box,
-        [0.0, 0.0, 1.0, 1.0]
+        (0.0, 0.0, 1.0, 1.0)
     )
 
     for draw_shape in canvas.shapes:
-        if isinstance(draw_shape, DrawLine):
-            l_data : DrawLine = draw_shape
+        if isinstance(draw_shape, DrawLineShape):
+            l_data : DrawLineShape = draw_shape
             transform_line = coord_t.transform_line(l_data.line)
-            p1, p2         = transform_line
-            draw_line(img, p1, p2, l_data.color, l_data.thickness)
+            draw_line(img, transform_line, l_data.color, int(l_data.thickness))
         
-        elif isinstance(draw_shape, DrawPoint):
-            p_data : DrawPoint = draw_shape
+        elif isinstance(draw_shape, DrawPointShape):
+            p_data : DrawPointShape = draw_shape
             transform_point = coord_t.transform_point(p_data.point)
-            draw_point(img, transform_point, p_data.color, p_data.radius - 1, p_data.radius)
+            draw_circle(
+                img, 
+                transform_point, 
+                p_data.color, 
+                max(1, int(p_data.radius - 1)), 
+                int(p_data.radius)
+            )
         
-        elif isinstance(draw_shape, DrawPolygon):
-            poly_data : DrawPolygon = draw_shape
+        elif isinstance(draw_shape, DrawPolygonShape):
+            poly_data : DrawPolygonShape = draw_shape
             transform_poly = coord_t.transform_polygon(poly_data.polygon)
-            draw_polygon(img, transform_poly, poly_data.color, poly_data.thickness)
+            draw_polygon(img, transform_poly, poly_data.color, int(poly_data.thickness))
         
-        elif isinstance(draw_shape, DrawBBox):
-            bbox_data : DrawBBox = draw_shape
+        elif isinstance(draw_shape, DrawBBoxShape):
+            bbox_data : DrawBBoxShape = draw_shape
             transform_bbox = coord_t.transform_bbox(bbox_data.bbox)
-            draw_bbox(img, transform_bbox, bbox_data.color, bbox_data.thickness)
+            draw_bbox(img, transform_bbox, bbox_data.color, int(bbox_data.thickness))
         
-        elif isinstance(draw_shape, FillPolygon):
-            poly_data : FillPolygon = draw_shape
-            transform_poly = coord_t.transform_polygon(poly_data.polygon)
-            fill_polygon(img, transform_poly, poly_data.color)
+        elif isinstance(draw_shape, FillPolygonShape):
+            fill_poly_data : FillPolygonShape = draw_shape
+            transform_poly = coord_t.transform_polygon(fill_poly_data.polygon)
+            fill_polygon(img, transform_poly, fill_poly_data.color)
         
         else:
             raise ValueError(f'unknown draw shape type:{type(draw_shape)}')

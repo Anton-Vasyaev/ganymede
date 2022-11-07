@@ -3,12 +3,11 @@ from typing import List
 # 3rd party
 import torch
 import numpy as np
-import cv2   as cv
+import cv2   as cv # type: ignore
 # project
 import ganymede.ml.pytorch.tensor as g_tensor
 import ganymede.imaging           as g_img
-
-from ganymede.math.point2 import Point2D
+from ganymede.math.primitives import Point2
 
 
 class RegressionKeypointDetector:
@@ -34,7 +33,7 @@ class RegressionKeypointDetector:
     def detect(
         self, 
         img : np.ndarray
-    ) -> List[Point2D]:
+    ) -> List[Point2]:
         if len(img.shape) >= 3:
             if img.shape[2] == 3 and self.in_channels == 1:
                 img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)

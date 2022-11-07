@@ -1,7 +1,7 @@
 # python
 from typing import Tuple, cast
 # 3rd party
-import cv2 as cv
+import cv2 as cv # type: ignore
 import numpy as np
 # project
 from ganymede.math.primitives import Mat3x3, Point2
@@ -11,8 +11,8 @@ PerspectiveType = Tuple[Point2, Point2, Point2, Point2]
 
 def canny_channels(
     img: np.ndarray,
-    threshold_1,
-    threshold_2
+    threshold_1 : int,
+    threshold_2 : int
 ) -> np.ndarray:
     original_type = img.dtype
     if np.issubdtype(original_type, np.floating):

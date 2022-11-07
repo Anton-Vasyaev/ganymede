@@ -3,13 +3,13 @@ from dataclasses import dataclass
 from typing import List
 # project
 from .auxiliary           import load_label_and_points_from_xml
-from ganymede.math.point2 import Point2D
+from ganymede.math.primitives import Point2
 
 
 @dataclass
 class CvatPolygonShape:
     label : str
-    points : List[Point2D]
+    points : List[Point2]
     
     @staticmethod
     def load_from_xml(
@@ -26,7 +26,7 @@ class CvatPolygonShape:
         roots,
         normalize_size = (1.0, 1.0)
     ):
-        polygons = []
+        polygons : List[CvatPolygonShape] = []
         for root in roots:
             polygons.append(CvatPolygonShape.load_from_xml(root, normalize_size))
 

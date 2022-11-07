@@ -2,14 +2,14 @@
 import random
 from enum   import Enum
 from random import Random
-from typing import TypeVar, List, Type, Any
+from typing import TypeVar, List, Type, Optional, cast
 
 T     = TypeVar('T')
-EnumT = TypeVar('T', bound=Enum)
+EnumT = TypeVar('EnumT', bound=Enum)
 
 
-def provide_default_instance_if_none(random_instance : Random) -> Random:
-    if random_instance is None: return Random(0)
+def provide_default_instance_if_none(random_instance : Optional[Random]) -> Random:
+    if random_instance is None: return cast(Random, random)
     else: return random_instance
 
 

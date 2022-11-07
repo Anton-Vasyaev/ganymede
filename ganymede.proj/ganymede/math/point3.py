@@ -1,72 +1,70 @@
 # python
 import math
-from typing import Tuple
+# project
+from ganymede.math.primitives import Point3, Point2
 
 
-Point3D = Tuple[float, float, float]
-
-
-def xy(vec):
-    x, y, z = vec
+def xy(p: Point3) -> Point2:
+    x, y, z = p
     return x, y
 
 
-def yx(vec):
-    x, y, z = vec
+def yx(p: Point3) -> Point2:
+    x, y, z = p
     return y, x
 
 
-def xz(vec):
-    x, y, z = vec
+def xz(p: Point3) -> Point2:
+    x, y, z = p
     return x, z
 
 
-def zx(vec):
-    x, y, z = vec
+def zx(p: Point3) -> Point2:
+    x, y, z = p
     return z, x
 
 
-def yz(vec):
-    x, y, z = vec
+def yz(p: Point3) -> Point2:
+    x, y, z = p
     return y, z
 
 
-def zy(vec):
-    x, y, z = vec
+def zy(p: Point3) -> Point2:
+    x, y, z = p
     return z, y
 
 
-def xzy(vec):
-    x, y, z = vec
+def xzy(p: Point3) -> Point3:
+    x, y, z = p
     return x, z, y
 
 
-def yxz(vec):
-    x, y, z = vec
+def yxz(p: Point3) -> Point3:
+    x, y, z = p
     return y, x, z
 
 
-def yzx(vec):
-    x, y, z = vec
+def yzx(p: Point3) -> Point3:
+    x, y, z = p
     return y, z, x
 
 
-def zxy(vec):
-    x, y, z = vec
+def zxy(p: Point3) -> Point3:
+    x, y, z = p
     return z, x, y
 
 
-def zyx(vec):
-    x, y, z = vec
+def zyx(p: Point3) -> Point3:
+    x, y, z = p
     return z, y, x
 
 
-def square_distance(a, b):
+def square_distance(a: Point3, b: Point3) -> float:
     ax, ay, az = a
     bx, by, bz = b
 
     return (bx - ax) ** 2 + (by - ay) ** 2 + (bz - az) ** 2
 
 
-def distance(a, b):
+def distance(a: Point3, b: Point3) -> float:
     return math.sqrt(square_distance(a, b))

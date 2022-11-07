@@ -11,10 +11,10 @@ def encode_img_to_png(img : np.ndarray) -> bytearray:
     return bytearray(png_data)
 
 
-def decode_img(binary_data) -> np.ndarray:
+def decode_img(binary_data : bytes) -> np.ndarray:
     data = np.frombuffer(binary_data, dtype=np.uint8)
 
-    img = cv.imdecode(data, cv.IMREAD_UNCHANGED)
+    img : np.ndarray = cv.imdecode(data, cv.IMREAD_UNCHANGED)
     if img is None: raise Exception('failed to decode img')
 
     return img

@@ -2,26 +2,27 @@
 import math
 # project
 import ganymede.core as g_core
+from ganymede.math.primitives import AlgTuple3
 
 RADIAN_PER_DEGREE = math.pi / 180
 DEGREE_PER_RADIAN = 180 / math.pi
 
 
-def deg2rad(degrees):
+def deg2rad(degrees: float) -> float:
     return degrees * RADIAN_PER_DEGREE
 
 
-def rad2deg(radians):
+def rad2deg(radians: float) -> float:
     return radians * DEGREE_PER_RADIAN
 
 
-def rgb2hsv(color):
+def rgb2hsv(color: AlgTuple3):
     r, g, b = color
 
     min_v, max_v = g_core.min_max_list([r, g, b])
 
-    h = s = v = 0
-    if   max_v == r and g >= b:
+    h = s = v = 0.0
+    if max_v == r and g >= b:
         h = 60 * (g - b) / (max_v - min_v)
     elif max_v == r and g < b:
         h = 60 * (g - b) / (max_v - min_v) + 360

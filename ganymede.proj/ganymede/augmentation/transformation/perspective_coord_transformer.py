@@ -1,28 +1,23 @@
+# python
 # 3rd party
-import cv2 as cv
-import numpy as np
 # project
+import ganymede.opencv as g_cv
 import ganymede.math.point2 as g_p2
-
+from ganymede.math.primitives import Mat3x3
+from ganymede.opencv.special import PerspectiveType
 
 
 class PerspectiveCoordTransformer:
-    @staticmethod
-    def from_points(src_points, dst_points):
-        src_p = np.float32(src_points)
-        dst_p = np.float32(dst_points)
+    transform_mat: Mat3x3
 
-        mat = cv.getPerspectiveTransform(src_p, dst_p)
-        
+    @staticmethod
+    def from_points(src_points: PerspectiveType, dst_points: PerspectiveType):
+        mat = g_cv.get_perspective_transform(src_points, dst_points)
+
         return PerspectiveCoordTransformer(mat)
-        
-    
-    def __init__(self, transform_mat):
-        if not isinstance(transform_mat, list):
-            transform_mat = transform_mat.tolist()
-            
+
+    def __init__(self, transform_mat: Mat3x3):
         self.transform_mat = transform_mat
-        
-        
+
     def __call__(self, coord):
         return g_p2.perspective_transform(coord, self.transform_mat)

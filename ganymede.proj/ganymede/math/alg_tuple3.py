@@ -1,69 +1,69 @@
 # python
-from typing import Tuple, Collection, cast
+from typing import Tuple, Sequence, cast
 # project
-import math.auxiliary as m_aux
-from .primitives import AlgTuple3
+import ganymede.math.auxiliary as m_aux
+from ganymede.math.primitives import AlgTuple3, Size2
 
 
-def add(a : AlgTuple3, b : AlgTuple3) -> AlgTuple3:
+def add(a: AlgTuple3, b: AlgTuple3) -> AlgTuple3:
     av1, av2, av3 = a
     bv1, bv2, bv3 = b
 
     return av1 + bv1, av2 + bv2, av3 + bv3
 
 
-def add_val(t : AlgTuple3, val : float) -> AlgTuple3:
+def add_val(t: AlgTuple3, val: float) -> AlgTuple3:
     v1, v2, v3 = t
 
-    return v1 + val, v2 + val, v3 + val 
+    return v1 + val, v2 + val, v3 + val
 
 
-def sub(a : AlgTuple3, b : AlgTuple3) -> AlgTuple3:
+def sub(a: AlgTuple3, b: AlgTuple3) -> AlgTuple3:
     av1, av2, av3 = a
     bv1, bv2, bv3 = b
 
     return av1 - bv1, av2 - bv2, av3 - bv3
 
 
-def sub_val(t : AlgTuple3, val : float) -> AlgTuple3:
+def sub_val(t: AlgTuple3, val: float) -> AlgTuple3:
     v1, v2, v3 = t
 
-    return v1 - val, v2 - val, v3 - val 
+    return v1 - val, v2 - val, v3 - val
 
 
-def mul(a : AlgTuple3, b : AlgTuple3) -> AlgTuple3:
+def mul(a: AlgTuple3, b: AlgTuple3) -> AlgTuple3:
     av1, av2, av3 = a
     bv1, bv2, bv3 = b
 
     return av1 * bv1, av2 * bv2, av3 * bv3
 
 
-def mul_val(t : AlgTuple3, val : float) -> AlgTuple3:
+def mul_val(t: AlgTuple3, val: float) -> AlgTuple3:
     v1, v2, v3 = t
 
-    return v1 * val, v2 * val, v3 * val 
+    return v1 * val, v2 * val, v3 * val
 
 
-def div(a : AlgTuple3, b : AlgTuple3) -> AlgTuple3:
+def div(a: AlgTuple3, b: AlgTuple3) -> AlgTuple3:
     av1, av2, av3 = a
     bv1, bv2, bv3 = b
 
     return av1 / bv1, av2 / bv2, av3 / bv3
 
 
-def div_val(t : AlgTuple3, val : float) -> AlgTuple3:
+def div_val(t: AlgTuple3, val: float) -> AlgTuple3:
     v1, v2, v3 = t
 
-    return v1 / val, v2 / val, v3 / val 
+    return v1 / val, v2 / val, v3 / val
 
 
-def minus(t : AlgTuple3) -> AlgTuple3:
+def minus(t: AlgTuple3) -> AlgTuple3:
     v1, v2, v3 = t
 
     return -v1, -v2, -v3
 
 
-def sum(values : Collection[AlgTuple3]) -> AlgTuple3:
+def sum(values: Sequence[AlgTuple3]) -> AlgTuple3:
     sum_t = 0.0, 0.0, 0.0
     for v in values:
         sum_t = add(sum_t, v)
@@ -71,15 +71,15 @@ def sum(values : Collection[AlgTuple3]) -> AlgTuple3:
     return sum_t
 
 
-def mean(values : Collection[AlgTuple3]) -> AlgTuple3:
+def mean(values: Sequence[AlgTuple3]) -> AlgTuple3:
     sum_t = sum(values)
 
     return div_val(sum_t, len(values))
 
 
 def clip(
-    value      : AlgTuple3, 
-    dimensions : Tuple[AlgTuple3, AlgTuple3, AlgTuple3]
+    value: AlgTuple3,
+    dimensions: Tuple[Size2, Size2, Size2]
 ) -> AlgTuple3:
     v1_dim, v2_dim, v3_dim = dimensions
 

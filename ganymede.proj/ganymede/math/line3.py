@@ -1,16 +1,11 @@
 # python
-from typing import Tuple
+from typing import Optional
 # project
-from .point3 import Point3D
+from ganymede.math.primitives import Point3, Vector3, Line3
 
 
-Line3D = Tuple[Point3D, Point3D]
-
-
-def center(line):
-    p1, p2 = line
-    x1, y1, z1 = p1
-    x2, y2, z2 = p2
+def center(line: Line3) -> Point3:
+    x1, y1, z1, x2, y2, z2 = line
 
     c_x = (x1 + x2) / 2
     c_y = (y1 + y2) / 2
@@ -19,20 +14,25 @@ def center(line):
     return c_x, c_y, c_z
 
 
-def from_point_and_vec(point, vector):
+def from_point_and_vec(
+    point: Point3,
+    vector: Vector3
+) -> Line3:
     x1, y1, z1 = point
     vx, vy, vz = vector
 
     x2, y2, z2 = x1 + vx, y1 + vy, z1 + vz
 
-    return (x1, y1, z1), (x2, y2, z2)
+    return x1, y1, z1, x2, y2, z2
 
 
-
-def inter_plane(line, plane_point, plane_norm_vector, eps = 1e-6):
-    lp1, lp2 = line
-    lx1, ly1, lz1 = lp1
-    lx2, ly2, lz2 = lp2
+def inter_plane(
+    line: Line3,
+    plane_point: Point3,
+    plane_norm_vector: Vector3,
+    eps: float = 1e-6
+) -> Optional[Point3]:
+    lx1, ly1, lz1, lx2, ly2, lz2 = line
 
     l_m = (lx2 - lx1)
     l_p = (ly2 - ly1)
@@ -46,8 +46,10 @@ def inter_plane(line, plane_point, plane_norm_vector, eps = 1e-6):
     numer = (p_D + p_A * lx1 + p_B * ly1 + p_C * lz1)
     denom = (p_A * l_m + p_B * l_p + p_C * l_l)
 
-    if abs(numer) > eps and abs(denom) < eps: return None
-    if abs(numer) < eps and abs(denom) < eps: return float('inf')
+    if abs(numer) > eps and abs(denom) < eps:
+        return None
+    if abs(numer) < eps and abs(denom) < eps:
+        return float('inf'), float('inf'), float('inf')
 
     t = - numer / denom
 

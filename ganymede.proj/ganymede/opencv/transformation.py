@@ -1,14 +1,16 @@
 # python
-from typing import Tuple
+from typing import Tuple, cast
 # 3rd party
 import cv2 as cv
 import numpy as np
+# project
+from ganymede.opencv.data import CvPerspective
 
 
 def resize_frame(
-    img           : np.ndarray,
-    frame_size    : Tuple[int, int],
-    interpolation : int = cv.INTER_AREA
+    img: np.ndarray,
+    frame_size: Tuple[int, int],
+    interpolation: int = cv.INTER_AREA
 ) -> np.ndarray:
     frame_w, frame_h = frame_size
 
@@ -20,42 +22,48 @@ def resize_frame(
 
     resize_w, resize_h = int(img_w * scale), int(img_h * scale)
 
-    img = cv.resize(img, (resize_w, resize_h), interpolation = interpolation)
+    img = cv.resize(img, (resize_w, resize_h), interpolation=interpolation)
 
     return img
 
 
-def warp_perspective_keypoints(
-    img           : np.ndarray,
-    src_points    : list,
-    dst_points    : list,
-    interpolation : int             = cv.INTER_AREA,
-    output_size   : Tuple[int, int] = None
+def warp_perspective_on_keypoints(
+    img: np.ndarray,
+    src_points: CvPerspective,
+    dst_points: CvPerspective,
+    interpolation: int = cv.INTER_AREA,
+    output_size: Tuple[int, int] = None
 ) -> np.ndarray:
     img_h, img_w = img.shape[0:2]
 
     if output_size is None:
         output_size = (img_w, img_h)
 
-    src_points = np.float32(src_points) * np.float32((img_w, img_h))
-    dst_points = np.float32(dst_points) * np.float32(output_size)
+    src_points = np.float32(
+        cast(np.floating, src_points)
+    ) * np.float32(cast(np.floating, (img_w, img_h)))
+
+    dst_points = np.float32(
+        cast(np.floating, dst_points)
+    ) * np.float32(cast(np.floating, output_size))
 
     transform = cv.getPerspectiveTransform(src_points, dst_points)
-    img       = cv.warpPerspective(img, transform, output_size, flags=interpolation)
+    img = cv.warpPerspective(img, transform, output_size, flags=interpolation)
 
     return img
 
 
+'''
 def warp_perspective_keypoints_coords(
-    coords     : list,
-    src_points : list,
-    dst_points : list
+    coords: list,
+    src_points: list,
+    dst_points: list
 ) -> list:
     src_p = np.float32(src_points)
     dst_p = np.float32(dst_points)
 
     transform = cv.getPerspectiveTransform(src_p, dst_p)
-    
+
     coords = np.float32(coords)
     coords = np.concatenate(
         (coords, np.ones(shape=(len(coords), 1), dtype=np.float32)),
@@ -64,7 +72,8 @@ def warp_perspective_keypoints_coords(
 
     coords = transform.dot(coords.T).T
 
-    divide = coords[:,2].reshape((coords.shape[0]))
+    divide = coords[:, 2].reshape((coords.shape[0]))
     coords[:, 0:2] /= divide[:, np.newaxis]
 
     return coords[:, 0:2].tolist()
+'''

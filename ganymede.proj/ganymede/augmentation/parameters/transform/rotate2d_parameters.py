@@ -1,0 +1,15 @@
+# python
+from dataclasses import dataclass
+# 3rd party
+import cv2 as cv # type: ignore
+# project
+from ganymede.augmentation.parameters.i_augmentation_parameters import IAugmentationParameters
+from ganymede.augmentation.augmentation_data import AugmentationData
+from ganymede.augmentation.function.transform.rotate2d import augmentate_rotate2d
+
+@dataclass
+class Rotate2dParameters(IAugmentationParameters):
+    angle : float
+
+    def augmentate(self, data: AugmentationData, interpolation: int = cv.INTER_AREA) -> AugmentationData:
+        return augmentate_rotate2d(data, self.angle, interpolation)

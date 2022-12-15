@@ -2,7 +2,7 @@
 import random
 from enum   import Enum
 from random import Random
-from typing import TypeVar, List, Type, Optional, cast
+from typing import TypeVar, List, Sequence, Type, Optional, cast
 
 T     = TypeVar('T')
 EnumT = TypeVar('EnumT', bound=Enum)
@@ -16,7 +16,7 @@ def provide_default_instance_if_none(random_instance : Optional[Random]) -> Rand
 def get_random_distance(
     start           : float  = 0.0, 
     end             : float  = 1.0,
-    random_instance : Random = None
+    random_instance : Optional[Random] = None
 ) -> float:
     random_instance = provide_default_instance_if_none(random_instance)
 
@@ -31,7 +31,7 @@ def get_random_distance(
 
 def get_random_bool(
     true_border     : float  = 0.5,
-    random_instance : Random = None
+    random_instance : Optional[Random] = None
 ) -> bool:
     random_instance = provide_default_instance_if_none(random_instance)
 
@@ -41,8 +41,8 @@ def get_random_bool(
 
 
 def get_random_enum(
-    enum_type : Type[EnumT],
-    random_instance = None
+    enum_type       : Type[EnumT],
+    random_instance : Optional[Random] = None
 ) -> EnumT:
     random_instance = provide_default_instance_if_none(random_instance)
 
@@ -50,8 +50,8 @@ def get_random_enum(
 
 
 def choice(
-    data : List[T],
-    random_instance = None
+    data            : Sequence[T],
+    random_instance : Optional[Random] = None
 ) -> T:
     random_instance = provide_default_instance_if_none(random_instance)
 
@@ -59,9 +59,9 @@ def choice(
 
 
 def sample(
-    data            : List[T],
+    data            : Sequence[T],
     len             : int,
-    random_instance : Random = None
+    random_instance : Optional[Random] = None
 ) -> List[T]:
     random_instance = provide_default_instance_if_none(random_instance)
 
@@ -69,9 +69,9 @@ def sample(
 
 
 def multisample(
-    data            : List[T],
+    data            : Sequence[T],
     sample_len      : int,
-    random_instance : random.Random = None
+    random_instance : Optional[Random] = None
 ) -> List[T]:
     if len(data) < 1:
         raise ValueError(f'invalid len(data) < 0:{len(data)}')

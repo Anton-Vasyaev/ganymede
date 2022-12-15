@@ -1,5 +1,6 @@
 # python
 import json
+from typing import Optional
 
 def load_from_file(path : str) -> dict:
     if not type(path) is str:
@@ -15,7 +16,7 @@ def load_from_file(path : str) -> dict:
 def write_to_file(
     data     : dict, 
     path     : str, 
-    indent   : int = None,
+    indent   : Optional[int] = None,
     encoding = 'utf-8'
 ):
     if not type(path) is str:

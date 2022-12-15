@@ -9,9 +9,9 @@ def aug_nearest_downsize(img, width_scale, height_scale):
 
     down_w, down_h = int(orig_w * width_scale), int(orig_h * height_scale)
 
-    img = cv.resize(img, (down_w, down_h), interpolation=cv.INTER_NEAREST)
+    img = cv.resize(img, (down_w, down_h), interpolation=cv.INTER_NEAREST) # type: ignore
 
-    img = cv.resize(img, (orig_w, orig_h), interpolation=cv.INTER_AREA)
+    img = cv.resize(img, (orig_w, orig_h), interpolation=cv.INTER_AREA) # type: ignore
 
     return img
 

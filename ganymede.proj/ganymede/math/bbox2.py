@@ -113,13 +113,34 @@ def iom(v: BBox2, z: BBox2) -> float:
     if l >= r or t >= b:
         return 0.0
 
-    a_area = area(v)
-    b_area = area(z)
-    min_area = min(a_area, b_area)
+    v_area = area(v)
+    z_area = area(z)
+    min_area = min(v_area, z_area)
 
     inter_area = area((l, t, r, b))
 
     return inter_area / min_area
+
+
+def iou(z : BBox2, v : BBox2) -> float:
+    vx1, vy1, vx2, vy2 = v
+    zx1, zy1, zx2, zy2 = z
+
+    l = max(vx1, zx1)
+    r = min(vx2, zx2)
+    t = max(vy1, zy1)
+    b = min(vy2, zy2)
+
+    if l >= r or t >= b:
+        return 0.0
+
+    v_area = area(v)
+    z_area = area(z)
+
+    inter_area = area((l, t, r, b))
+    union_area = z_area + v_area - inter_area
+
+    return inter_area / union_area
 
 
 def corner_points(bbox: BBox2) -> Tuple[Point2, Point2, Point2, Point2]:

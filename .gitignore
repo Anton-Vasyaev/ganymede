@@ -1,5 +1,8 @@
 .vscode
 __pycache__
 ganymede.egg-info
+
 build
 *.dll
+win64
+linux64

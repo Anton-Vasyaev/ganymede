@@ -2,3 +2,4 @@
 __pycache__
 ganymede.egg-info
 build
+*.dll

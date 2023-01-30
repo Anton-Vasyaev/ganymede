@@ -1,0 +1,3 @@
+[submodule "submodules/auxml"]
+	path = submodules/auxml
+	url = git@github.com:Anton-Vasyaev/auxml.git

@@ -10,9 +10,13 @@ def get_version():
     with io.open(version_file, encoding='utf-8') as f:
         return re.search(r'^__version__ = [\'"]([^\'"]*)[\'"]', f.read(), re.M).group(1)
 
+data = find_packages(where='ganymede.proj')
+print(f'packages:{data}')
+
 setup(
     name='ganymede',
     version=get_version(),
     packages=find_packages(where='ganymede.proj'),
-    package_dir={'': 'ganymede.proj'}
+    package_dir={'': 'ganymede.proj'},
+    package_data={'': ['native.dll']}
 )

@@ -14,3 +14,11 @@ def read_lines(
             lines[idx] = line
 
     return lines
+
+
+def write_bytes(
+    file_path : str,
+    data : bytes
+):
+    with open(file_path, 'wb') as fh:
+        fh.write(data)

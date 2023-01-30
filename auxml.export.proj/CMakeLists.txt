@@ -35,6 +35,8 @@ add_custom_command(
     
     COMMAND ${CMAKE_COMMAND} -E make_directory ${COPY_PYTHON_DIR}
 
+    COMMAND ${CMAKE_COMMAND} -E touch ${COPY_PYTHON_DIR}/__init__.py
+
     COMMAND ${CMAKE_COMMAND} -E copy
     $<TARGET_FILE:${TARGET_NAME}> ${COPY_PYTHON_DIR}/$<TARGET_FILE_NAME:${TARGET_NAME}>
 )

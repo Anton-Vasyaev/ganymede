@@ -13,6 +13,8 @@ def get_bit_design() -> int:
     return ctypes.sizeof(ctypes.c_void_p) * 8
 
 
+POSIX_LOAD_LIBRARIES = []
+
 class LibraryModule:
     handler : CDLL
 
@@ -20,31 +22,42 @@ class LibraryModule:
         self,
         directory_path : str = ''
     ):
-        bit_design = get_bit_design()
-        if bit_design != 64:
-            raise Exception(f'Native libraries not implemented for bit design: x{bit_design}') 
+        try:
+            bit_design = get_bit_design()
+            if bit_design != 64:
+                print(f'Native libraries not implemented for bit design: x{bit_design}')
+                return
 
-        os_dir = ''
-        if os.name == 'nt':
-            os_dir = 'win'
-        elif os.name == 'posix' and platform.system() == 'Linux':
-            os_dir = 'linux'
-        else:
-            print(f'Not load native libraries for os:{platform.system()}')
+            os_dir = ''
+            if os.name == 'nt':
+                os_dir = 'win'
+            elif os.name == 'posix' and platform.system() == 'Linux':
+                os_dir = 'linux'
+            else:
+                print(f'Not load native libraries for os:{platform.system()}')
+                return
 
-        binary_path = p.join(directory_path, f'{os_dir}{bit_design}')
+            binary_path = p.join(directory_path, f'{os_dir}{bit_design}')
 
-        if os.name == 'nt':
-            import win32api
-            win32api.SetDllDirectory(binary_path)
-            self.handler = ctypes.CDLL(p.join(binary_path, 'auxml.dll'))
+            if os.name == 'nt':
+                import win32api
+                win32api.SetDllDirectory(binary_path)
+                self.handler = ctypes.CDLL(p.join(binary_path, 'auxml.dll'))
+            elif os.name == 'posix' and platform.system() == 'Linux':
+                POSIX_LOAD_LIBRARIES.append(CDLL('libstdc++.so.6'))
+                print(POSIX_LOAD_LIBRARIES)
+                print(f'load sttd')
+                self.handler = CDLL(p.join(binary_path, 'libauxml.so'))
+        except Exception as exc:
+            print(f'Failed to load native libraries:{exc}')
+            
 
 
 
 
 LIBRARY_MODULE = LibraryModule(NATIVE_LIBS_PATH)
 
-__libc = CDLL("msvcrt") if os.name == 'nt' else None
+__libc = CDLL('msvcrt') if os.name == 'nt' else CDLL('libc.so.6')
 
 if __libc == None:
     raise Exception('Cannot initialize native C library.')

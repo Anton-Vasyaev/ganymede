@@ -58,10 +58,11 @@ class build_ext(build_ext_orig):
         # update conan
         conan_update_dir = p.abspath(ext.conan_update_dir)
         os.chdir(conan_update_dir)
+        
         if os.name == 'nt':
             self.spawn(['conan_update_x64.bat'])
         elif os.name == 'posix':
-            self.spawn(['conan_update_x64.sh'])
+            self.spawn(['bash', 'conan_update_x64.sh'])
         else:
             raise Exception(f'Not expected os:{os.name}')
         os.chdir(setup_path)
@@ -112,7 +113,7 @@ setup(
     requires_python='>=3.9.0',
     packages = find_packages(where='ganymede.proj'),
     package_dir = {'': 'ganymede.proj'},
-    package_data = {'': ['*.dll']},
+    package_data = {'': ['*.dll', '*.so']},
     distclass = BinaryDistribution,
     ext_modules = [
         CMakeConanExtension('auxml.export.proj', 'submodules/auxml', 'auxml_export')

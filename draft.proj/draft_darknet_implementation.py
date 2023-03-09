@@ -20,9 +20,9 @@ from ganymede.ml.pytorch.detectors.darknet_detector import DarknetDetector
 
 
 def call_visualise_detections():
-    cfg_path     = r'C:\data\models\coco\yolov4-tiny.cfg'
-    weights_path = r'C:\data\models\coco\yolov4-tiny.weights'
-    images_path = r'C:\datasets\test_imgs_detection'
+    cfg_path     = r'/home/anton/datasets/yolo_test/model/yolov4-tiny.cfg'
+    weights_path = r'/home/anton/datasets/yolo_test/model/yolov4-tiny.weights'
+    images_path = r'/home/anton/datasets/yolo_test/test_images'
 
     #cfg_path     = r'C:\data\models\shkr\horizontal_roll\2022.10.31\yolov4_tiny_shkr.cfg'
     #weights_path = r'C:\data\models\shkr\horizontal_roll\2022.10.31\yolov4_tiny_shkr.weights'
@@ -34,7 +34,7 @@ def call_visualise_detections():
 
     img = g_cv.imread(images_path_list[0])
 
-    #detections = detector.detect(img, 0.25, 0.4)
+    #detections = detector.detect(img, 0.4, 0.25)
     #times_n    = 100
 
     '''
@@ -49,19 +49,14 @@ def call_visualise_detections():
     for img_path in images_path_list:
         img = g_cv.imread(str(img_path))
 
-        detections = detector.detect(img, 0.25, 0.4)
+        detections = detector.detect(img, 0.4, 0.25)
 
         show_img = img.copy()
         show_img = g_cv.resize_frame(show_img, (1600, 900))
 
         for detection in detections:
             g_cv.draw_bbox(show_img, detection.bbox, (255, 0, 0), 2)
-            g_draw.draw_text_list(
-                show_img,
-                [
-                    (f'{detection.class_id}', detection.bbox[0:2], (255, 0, 0))
-                ]
-            )
+            g_cv.draw_text(show_img, f'{detection.class_id}', detection.bbox[0:2], (255, 0, 0))
 
         g_cv.imshow('debug', show_img)
 

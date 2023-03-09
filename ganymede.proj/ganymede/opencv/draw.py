@@ -186,6 +186,31 @@ def fill_polygon(
     cv.fillPoly(img, np_coords, color)
 
 
+def draw_text(
+    img : np.ndarray, 
+    text : str, 
+    position : Point2, 
+    color : AlgTuple3,
+    thickness  : int = 1,
+    font_scale : float = 0.5,
+    font_type : int = cv.FONT_HERSHEY_DUPLEX,
+    normalized_coords : bool = True
+):
+    r, g, b = color
+
+    img_h, img_w = img.shape[0:2]
+
+    x, y = position
+
+    if normalized_coords:
+        x, y = x * img_w, y * img_h
+
+    x, y = int(x), int(y)
+
+    cv.putText(img, text, (x, y), font_type, font_scale, (b, g, r), thickness)
+
+
+
 
 def draw_canvas(
     img,

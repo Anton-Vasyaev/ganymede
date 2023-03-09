@@ -90,7 +90,7 @@ def convert_np_array_to_native(array : np.ndarray) -> output_tensor:
 def convert_yolo_modules_to_native(
     yolo_params  : List[YoloLayer],
     outputs : List[np.ndarray]
-) -> list[yolo_output]:
+) -> List[yolo_output]:
     yolo_outputs : List[yolo_output] = []
 
     for idx in range(len(yolo_params)):

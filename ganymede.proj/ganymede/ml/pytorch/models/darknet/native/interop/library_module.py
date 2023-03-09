@@ -14,6 +14,8 @@ def get_bit_design() -> int:
 
 
 class LibraryModule:
+    handler : CDLL
+
     def __init__(
         self,
         directory_path : str = ''
@@ -28,7 +30,7 @@ class LibraryModule:
         elif os.name == 'posix' and platform.system() == 'Linux':
             os_dir = 'linux'
         else:
-            raise NotImplementedError(f'Native libraries not implemented for os:{platform.system()}')
+            print(f'Not load native libraries for os:{platform.system()}')
 
         binary_path = p.join(directory_path, f'{os_dir}{bit_design}')
 

@@ -18,7 +18,7 @@ from ganymede.augmentation.distribution import *
 from ganymede.augmentation.parameters   import *
 from ganymede.augmentation import AugmentationData
 
-from fastdi.config import deserialize_config
+from autofast.config import deserialize_config
 
 @dataclass
 class AugmentationExample:

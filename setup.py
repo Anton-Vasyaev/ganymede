@@ -77,7 +77,7 @@ class build_ext(build_ext_orig):
             '-DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE',
             '-DCMAKE_BUILD_TYPE:STRING=Release',
             '-S', str(cmake_dir_p), 
-            '-B', str(cmake_build_dir_p)
+            '-B', str(cmake_build_dir_p),
         ]
         self.spawn(['cmake'] + cmake_args)
 
@@ -85,24 +85,39 @@ class build_ext(build_ext_orig):
         cmake_args = [
             '--build', str(cmake_build_dir_p),
             '--config', 'Release',
-            '--target', ext.target
+            '--target', ext.target,
         ]
         self.spawn(['cmake'] + cmake_args)
 
         os.chdir(setup_path)
 
 
+LONG_DESCRIPTION = ''
+with open('README.md') as fh:
+    LONG_DESCRIPTION = fh.read()
+    
+
 setup(
-    name='ganymede',
-    version=get_version(),
-    packages=find_packages(where='ganymede.proj'),
-    package_dir={'': 'ganymede.proj'},
-    package_data={'': ['*.dll']},
-    distclass=BinaryDistribution,
-    ext_modules=[
+    name = 'ganymede',
+    version = get_version(),
+    description = 'Auxiliary library for computer vision and deep learning',
+    author = 'Anton Vasyev',
+    author_email = 'vasyaevanton@gmail.com',
+    license = 'MIT',
+    keywords = '',
+    url = 'https://github.com/Anton-Vasyaev/ganymede',
+    install_requires = [
+        'autofast>=0.2.1'
+    ],
+    requires_python='>=3.9.0',
+    packages = find_packages(where='ganymede.proj'),
+    package_dir = {'': 'ganymede.proj'},
+    package_data = {'': ['*.dll']},
+    distclass = BinaryDistribution,
+    ext_modules = [
         CMakeConanExtension('auxml.export.proj', 'submodules/auxml', 'auxml_export')
     ],
-    cmdclass={
+    cmdclass = {
         'build_ext': build_ext,
     }
 )

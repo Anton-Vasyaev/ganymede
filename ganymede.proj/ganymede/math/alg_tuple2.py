@@ -2,7 +2,7 @@
 from typing import Sequence, Tuple, cast
 # project
 import ganymede.math.auxiliary as m_aux
-from ganymede.math.primitives import AlgTuple2
+from ganymede.math.primitives import AlgTuple2, Size2
 
 
 def add(a: AlgTuple2, b: AlgTuple2) -> AlgTuple2:
@@ -77,7 +77,7 @@ def mean(values: Sequence[AlgTuple2]) -> AlgTuple2:
     return div_val(sum_t, len(values))
 
 
-def clip(value: AlgTuple2, dimensions: Tuple[AlgTuple2, AlgTuple2]) -> AlgTuple2:
+def clip(value: AlgTuple2, dimensions: Tuple[Size2, Size2]) -> AlgTuple2:
     v1_dim, v2_dim = dimensions
 
     v1_min, v1_max = v1_dim

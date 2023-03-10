@@ -99,7 +99,7 @@ with open('README.md') as fh:
     
 
 setup(
-    name = 'ganymede',
+    name = 'ganymede-aux',
     version = get_version(),
     description = 'Auxiliary library for computer vision and deep learning',
     author = 'Anton Vasyev',

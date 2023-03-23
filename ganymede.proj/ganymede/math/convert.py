@@ -19,7 +19,7 @@ def rad2deg(radians: float) -> float:
 def rgb2hsv(color: AlgTuple3):
     r, g, b = color
 
-    min_v, max_v = g_core.min_max_list([r, g, b])
+    min_v, max_v = g_core.collection_min_max([r, g, b])
 
     h = s = v = 0.0
     if max_v == r and g >= b:

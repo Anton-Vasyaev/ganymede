@@ -1,5 +1,5 @@
 # Ganymede
-Ganymede - it is a auxiliary library for computer Vision and deep Learning tasks.
+Ganymede - is a auxiliary library for computer Vision and deep Learning tasks.
 
 ### Features
 

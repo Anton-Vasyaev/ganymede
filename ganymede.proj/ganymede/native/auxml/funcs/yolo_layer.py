@@ -4,10 +4,12 @@ from typing import List, Tuple
 import numpy as np
 from ganymede.ml.data import ObjectDetection
 # project
-from .interop import *
-from ..postprocessing.yolo_layer import ObjectDetectionBatch, ObjectDetectionList
-from ..model.modules import YoloModule
-from ..parsing.data import NetParams, YoloLayer
+from ..interop import *
+from ....ml.pytorch.models.darknet.postprocessing.yolo_layer import ObjectDetectionBatch, ObjectDetectionList
+from ....ml.pytorch.models.darknet.model.modules import YoloModule
+from ....ml.pytorch.models.darknet.parsing.data import NetParams, YoloLayer
+
+from ..auxiliary import *
 
 
 def convert_int_list_to_native(values : List[int]) -> int_list:
@@ -104,31 +106,14 @@ def convert_yolo_modules_to_native(
     return yolo_outputs
 
 
-def validate_return_status(status : return_status):
-    err_msg_s = ''
-
-    if status.correct_status != 1:
-        msg_len = LIBRARY_C.strlen(status.error_message)
-        char_arr = (c_char * (msg_len + 1))()
-        char_arr[-1] = 0
-        memmove(byref(char_arr), status.error_message, msg_len)
-
-        err_msg_s = bytearray(char_arr).decode('ascii')
-
-    done_return_status(status)
-    
-    if err_msg_s != '':
-        raise Exception(f'darknet_postprocessing native exception:{err_msg_s}')
-
-
-def native_postprocessing_yolo_layer(
+def process_yolo_detections(
     output_modules : List[YoloModule],
     net_params_a   : NetParams,
-    obj_thresh     : float,
-    nms_thresh     : float
+    obj_thresholds : List[float],
+    nms_thresholds : List[float]
 ) -> ObjectDetectionBatch:
     
-    detections_batch_handler = object_handler()
+    detections_batch_handler        = object_handler()
     detections_batch_handler.object = c_void_p(0)
 
     try:
@@ -147,63 +132,20 @@ def native_postprocessing_yolo_layer(
 
         yolo_outputs_array = (yolo_output * len(yolo_outputs_list))(*yolo_outputs_list)
 
-        return_status = process_yolo_detections(
+        obj_thresholds_array = (c_float * len(obj_thresholds))(*obj_thresholds)
+        nms_thresholds_array = (c_float * len(nms_thresholds))(*nms_thresholds)
+
+        return_status = api_process_yolo_detections(
             yolo_outputs_array,
             len(yolo_outputs_array),
             net_param_c,
-            obj_thresh,
-            nms_thresh,
+            obj_thresholds_array,
+            nms_thresholds_array,
             detections_batch_handler
         )
         validate_return_status(return_status)
 
-        batch_size_c = c_uint64()
-        return_status = detections_batch_size(
-            detections_batch_handler,
-            pointer(batch_size_c)
-        )
-        validate_return_status(return_status)
-        batch_size = batch_size_c.value
-
-        detections_batch : ObjectDetectionBatch = []
-
-        for batch_idx in range(batch_size):
-            batch_idx_c = c_uint64(batch_idx)
-
-            detections_count_c = c_uint64()
-            return_status = detections_batch_detections_count(
-                detections_batch_handler,
-                batch_idx_c,
-                byref(detections_count_c)
-            )
-            validate_return_status(return_status)
-
-            detections_count = detections_count_c.value
-            object_detections_arr = (object_detection * detections_count)()
-            return_status = detections_batch_detections_store(
-                detections_batch_handler,
-                batch_idx_c,
-                object_detections_arr
-            )
-
-            detections : ObjectDetectionList = []
-
-            for obj_det in object_detections_arr:
-                x1 : float = obj_det.x1
-                y1 : float = obj_det.y1
-                x2 : float = obj_det.x2
-                y2 : float = obj_det.y2
-
-                class_id : int = obj_det.class_id
-
-                obj_conf : float = obj_det.object_confidence
-                cls_conf : float = obj_det.class_confidence
-
-                detections.append(ObjectDetection((x1, y1, x2, y2), class_id, obj_conf, cls_conf))
-
-            detections_batch.append(detections)
-
-        return detections_batch
+        return get_detections_from_handler(detections_batch_handler)
     finally:
         if detections_batch_handler.object != 0:
-            object_handler_destroy(detections_batch_handler)
+            api_object_handler_destroy(detections_batch_handler)

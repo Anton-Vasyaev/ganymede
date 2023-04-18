@@ -1,6 +1,8 @@
 # python
 from dataclasses import dataclass
 from typing import List, Tuple
+# 3rd party
+import numpy as np
 # project
 from ..enum_types.iou_loss_type import IoULossType
 from ..enum_types.nms_kind_type import NmsKindType
@@ -19,7 +21,11 @@ class YoloLayer:
 
     scale_x_y : float
 
+    objectness_smooth : float
+
     new_coords : bool
+
+    max_delta : float
 
     iou_normalizer : float
 
@@ -60,7 +66,9 @@ ALLOW_YOLO_PARAMS = set([
     'mask',
     'max', # max_boxes
     'scale_x_y',
+    'objectness_smooth',
     'new_coords',
+    'max_delta',
     'iou_normalizer',
     'obj_normalizer',
     'cls_normalizer',
@@ -100,7 +108,11 @@ def parse_yolo(data : ConfigBlock) -> YoloLayer:
 
     scale_x_y = option_find_float_default(data, 'scale_x_y', 1.0)
 
+    objectness_smooth = option_find_int_default(data, 'objectness_smooth', 0)
+
     new_coords = option_find_int_default(data, 'new_coords', 0)
+
+    max_delta = option_find_float_default(data, 'max_delta', np.finfo(np.float32).max)
 
     iou_normalizer = option_find_float_default(data, 'iou_normalizer', 0.75)
 
@@ -138,7 +150,9 @@ def parse_yolo(data : ConfigBlock) -> YoloLayer:
         mask,
         max_boxes,
         scale_x_y,
+        objectness_smooth,
         bool(new_coords),
+        max_delta,
         iou_normalizer,
         obj_normalizer,
         cls_normalizer,

@@ -1,5 +1,6 @@
 # python
 from dataclasses import dataclass
+from typing      import List
 # project
 from ganymede.math.primitives import BBox2
 
@@ -10,3 +11,8 @@ class ObjectDetection:
     class_id            : int
     object_confidence   : float
     class_confidence    : float
+
+
+ObjectDetectionList = List[ObjectDetection]
+
+ObjectDetectionBatch = List[ObjectDetectionList] 

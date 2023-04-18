@@ -5,7 +5,7 @@ from typing import List, Tuple
 import torch
 import numpy as np
 import ganymede.math.bbox2 as m_bbox2
-from ganymede.ml.data import ObjectDetection
+from ganymede.ml.data import *
 from nameof import nameof
 # project
 from ..model.modules        import YoloModule
@@ -16,14 +16,18 @@ from ..parsing.parse_blocks import NetParams
 YoloDetectionList  = List[YoloBox]
 YoloDetectionBatch = List[YoloDetectionList]
 
-ObjectDetectionList  = List[ObjectDetection]
-ObjectDetectionBatch = List[ObjectDetectionList]
 
 
 def sigmoid(x):
     return 1 / (1 + math.exp(-x))
 
 sigmoid_v = np.vectorize(sigmoid)
+
+
+def scale_x_y(data, scale_x_y):
+    return data * scale_x_y - 0.5 * (scale_x_y - 1.0)
+
+scale_x_y_v = np.vectorize(scale_x_y)
 
 
 def sigmoid_scale_x_y(data, scale_x_y):
@@ -63,7 +67,8 @@ def activate_yolo_output(
     batch_yolo_output : np.ndarray,
     anchors_count     : int,
     classes_count     : int,
-    scale_x_y         : float
+    scale_x_y         : float,
+    new_coords        : bool = True
 ) -> np.ndarray:
     mask_size = (5 + classes_count)
     filters_size = anchors_count * mask_size
@@ -74,23 +79,28 @@ def activate_yolo_output(
     original_shape = output.shape
     output.shape   = output.shape[:-1] + (anchors_count, mask_size)
 
-    # activate sigmoid and scale x, y
-    output[...,0:2] = sigmoid_scale_x_y_v(output[..., 0:2], scale_x_y)
+    if not new_coords:
+        # activate sigmoid  x, y
+        output[...,0:2] = sigmoid_v(output[..., 0:2])
 
-    # activate sigmoid object prob and classes probs
-    output[...,4:] = sigmoid_v(output[..., 4:])
+        # activate sigmoid object prob and classes probs
+        output[...,4:] = sigmoid_v(output[..., 4:])
+
+    # scale x, y
+    output[..., 0:2] = scale_x_y_v(output[..., 0:2], scale_x_y)
 
     output.shape = original_shape
 
     return output
 
 
-def get_yolo_boxes_standard(
+def get_yolo_boxes(
     activated_output   : np.ndarray,
     anchors            : List[Tuple[int, int]],
     classes_count      : int,
     net_width          : int,
     net_height         : int,
+    new_coords         : bool,
     obj_conf_threshold : float
 ) -> YoloDetectionBatch:
     mask_size    = (5 + classes_count)
@@ -131,8 +141,12 @@ def get_yolo_boxes_standard(
                     x = (w_i + x) / out_w
                     y = (h_i + y) / out_h
 
-                    w = math.exp(w) * w_anchor / net_width
-                    h = math.exp(h) * h_anchor / net_height
+                    if new_coords:
+                        w = w * w * 4 * w_anchor / net_width
+                        h = h * h * 4 * h_anchor / net_height
+                    else:
+                        w = math.exp(w) * w_anchor / net_width
+                        h = math.exp(h) * h_anchor / net_height
 
                     x1, y1 = x - w / 2, y - h / 2
                     x2, y2 = x + w / 2, y + h / 2
@@ -142,28 +156,6 @@ def get_yolo_boxes_standard(
         detections_batch.append(detections)
 
     return detections_batch
-
-
-def get_yolo_boxes(
-    activated_output : np.ndarray,
-    anchors          : List[Tuple[int, int]],
-    classes_count    : int,
-    net_width        : int,
-    net_height       : int,
-    new_coord        : bool,
-    obj_conf_threshold : float
-) -> YoloDetectionBatch:
-    if new_coord:
-        raise NotImplementedError(f'Not implement building yolo boxes for new_coord.')
-    else:
-        return get_yolo_boxes_standard(
-            activated_output,
-            anchors,
-            classes_count,
-            net_width,
-            net_height,
-            obj_conf_threshold
-        )
     
 
 def do_nms_sort(
@@ -174,9 +166,6 @@ def do_nms_sort(
     for detections in detections_batch:
         for class_idx in range(classes_count):
             detections.sort(key = lambda b : b.class_probs[class_idx], reverse=True)
-
-            # ToDo
-            print([d.class_probs[class_idx] for d in detections])
 
             for i in range(len(detections)):
                 main_box  = detections[i]
@@ -219,7 +208,7 @@ def postprocessing_yolo_layer(
         output_np = output_np.transpose(0, 2, 3, 1)
 
         # activate outputs
-        activated_output = activate_yolo_output(output_np, len(curr_anchors), params.classes, params.scale_x_y)
+        activated_output = activate_yolo_output(output_np, len(curr_anchors), params.classes, params.scale_x_y, params.new_coords)
 
         # build box candidates
         yolo_boxes_batch = get_yolo_boxes(
@@ -232,14 +221,14 @@ def postprocessing_yolo_layer(
             obj_thresh
         )
 
-        # process Non Maximum Supression
-        do_nms_sort(yolo_boxes_batch, params.classes, nms_thresh)
-
         if len(yolo_detections_batch) == 0:
             yolo_detections_batch = yolo_boxes_batch
         else:
             for idx in range(len(yolo_boxes_batch)):
                 yolo_detections_batch[idx] += yolo_boxes_batch[idx]
+
+    # process Non Maximum Supression
+    do_nms_sort(yolo_detections_batch, params.classes, nms_thresh)
 
     
     # make object detections

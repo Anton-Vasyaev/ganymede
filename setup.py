@@ -7,7 +7,7 @@ import os.path as p
 from pathlib import Path
 from setuptools import setup, Distribution, Extension, find_packages
 from setuptools.command.build_ext import build_ext as build_ext_orig
-from setuptools import setup, find_packages, find_namespace_packages
+from distutils.cmd import Command
 
 
 def get_version():
@@ -37,23 +37,27 @@ class CMakeConanExtension(Extension):
         self.target           = target
 
 
-class build_ext(build_ext_orig):
+class BuildCmakeDist(build_ext_orig):
+    extensions = [
+        CMakeConanExtension('auxml.export.proj', 'submodules/auxml', 'auxml_export')
+    ]
+
 
     def run(self):
-        for ext in self.extensions:
+        for ext in BuildCmakeDist.extensions:
             self.build_cmake(ext)
         super().run()
 
 
-    def build_cmake(self, ext):
+    def build_cmake(self, ext : CMakeConanExtension):
         setup_path = p.abspath(p.dirname(__file__))
 
         # these dirs will be created in build_py, so if you don't have
         # any python sources to bundle, the dirs will be missing
-        build_temp = Path(self.build_temp)
-        build_temp.mkdir(parents=True, exist_ok=True)
-        extdir = Path(self.get_ext_fullpath(ext.name))
-        extdir.mkdir(parents=True, exist_ok=True)
+        #build_temp = Path(self.build_temp)
+        #build_temp.mkdir(parents=True, exist_ok=True)
+        #extdir = Path(self.get_ext_fullpath(ext.name))
+        #extdir.mkdir(parents=True, exist_ok=True)
 
         # update conan
         conan_update_dir = p.abspath(ext.conan_update_dir)
@@ -67,7 +71,6 @@ class build_ext(build_ext_orig):
             raise Exception(f'Not expected os:{os.name}')
         os.chdir(setup_path)
 
-        
         # cmake
         cmake_dir_p = Path(ext.name).absolute()
         cmake_build_dir_p = cmake_dir_p / 'build'
@@ -115,10 +118,7 @@ setup(
     package_dir = {'': 'ganymede.proj'},
     package_data = {'': ['*.dll', '*.so']},
     distclass = BinaryDistribution,
-    ext_modules = [
-        CMakeConanExtension('auxml.export.proj', 'submodules/auxml', 'auxml_export')
-    ],
     cmdclass = {
-        'build_ext': build_ext,
+        'build_ext': BuildCmakeDist,
     }
 )

@@ -6,7 +6,7 @@ import platform
 from enum   import IntEnum, auto
 from ctypes import *
 
-from ganymede.native_libs import NATIVE_LIBS_PATH
+from ganymede.native import NATIVE_LIBS_PATH
 
 
 def get_bit_design() -> int:
@@ -46,20 +46,17 @@ class LibraryModule:
             elif os.name == 'posix' and platform.system() == 'Linux':
                 POSIX_LOAD_LIBRARIES.append(CDLL('libstdc++.so.6'))
                 print(POSIX_LOAD_LIBRARIES)
-                print(f'load sttd')
+                print(f'load std')
                 self.handler = CDLL(p.join(binary_path, 'libauxml.so'))
         except Exception as exc:
             print(f'Failed to load native libraries:{exc}')
             
 
-
-
-
 LIBRARY_MODULE = LibraryModule(NATIVE_LIBS_PATH)
 
 __libc = CDLL('msvcrt') if os.name == 'nt' else CDLL('libc.so.6')
 
-if __libc == None:
+if __libc is None:
     raise Exception('Cannot initialize native C library.')
 
 LIBRARY_C = __libc

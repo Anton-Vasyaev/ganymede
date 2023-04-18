@@ -27,7 +27,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
 endif()
 
 # copy native libraries
-set(COPY_PYTHON_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../ganymede.proj/ganymede/native_libs/${COPY_PYTHON_DIR_OS_POSTFIX}${COPY_PYTHON_DIR_BIT_POSTFIX}) 
+set(COPY_PYTHON_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../ganymede.proj/ganymede/native/libs/${COPY_PYTHON_DIR_OS_POSTFIX}${COPY_PYTHON_DIR_BIT_POSTFIX}) 
 
 message("COPY PYTHON DIR:${COPY_PYTHON_DIR}")
 add_custom_command(

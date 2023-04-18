@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from random import Random
 from abc    import abstractmethod
 # project
-from autofast.config import field_meta
 
 from ganymede.augmentation.parameters.i_augmentation_parameters import IAugmentationParameters
 

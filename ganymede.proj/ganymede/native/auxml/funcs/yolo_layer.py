@@ -107,7 +107,8 @@ def convert_yolo_modules_to_native(
 
 
 def process_yolo_detections(
-    output_modules : List[YoloModule],
+    output_layers_params  : List[YoloLayer],
+    outputs : List[np.ndarray],
     net_params_a   : NetParams,
     obj_thresholds : List[float],
     nms_thresholds : List[float]
@@ -121,14 +122,7 @@ def process_yolo_detections(
         net_param_c.width = net_params_a.width
         net_param_c.height = net_params_a.height
 
-        outputs : List[np.ndarray] = []
-        for output_module in output_modules:
-            output = output_module.output.detach().cpu().permute(0, 2, 3, 1).numpy()
-            outputs.append(output)
-
-        params = [m.params for m in output_modules]
-
-        yolo_outputs_list = convert_yolo_modules_to_native(params, outputs)
+        yolo_outputs_list = convert_yolo_modules_to_native(output_layers_params, outputs)
 
         yolo_outputs_array = (yolo_output * len(yolo_outputs_list))(*yolo_outputs_list)
 

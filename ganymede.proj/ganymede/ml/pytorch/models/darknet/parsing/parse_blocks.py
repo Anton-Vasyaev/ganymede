@@ -1,4 +1,5 @@
 # python
+import os.path as path
 import re
 from typing import List, Any, Callable, Optional
 from dataclasses import dataclass
@@ -27,10 +28,47 @@ DARKNET_PARSERS : Dict[DarknetLayerType, Callable[[ConfigBlock], Any]] = {
 
 
 @dataclass
-class DarknetNetworkBone:
+class DarknetBackbone:
     net_params : NetParams
 
     layers : List[Any]
+
+    def validate(self):
+        # validate same classes for each output layer
+        classes = -1
+
+        find_output = False
+
+        for layer in self.layers:
+            if isinstance(layer, YoloLayer):
+                find_output = True
+
+                yolo_layer = cast(YoloLayer, layer)
+                
+                current_classes = yolo_layer.classes
+
+                if classes == -1:
+                    classes = current_classes
+                else:
+                    if current_classes != classes:
+                        raise Exception(f'Different classes in output layers in darknet backbone.')
+                    
+        if not find_output:
+            raise Exception(
+                f'Not find output layer in darknet backbone'
+            )
+                    
+
+    def get_classes(self) -> int:
+        classes = -1
+
+        for layer in self.layers:
+            if isinstance(layer, YoloLayer):
+                yolo_layer = cast(YoloLayer, layer)
+                
+                return yolo_layer.classes
+            
+        return classes
 
 
 def is_space_line(data : str) -> bool:
@@ -137,7 +175,7 @@ def parse_blocks(
     return blocks
 
 
-def build_bone(config_info : ConfigInfo) -> DarknetNetworkBone:
+def build_bone(config_info : ConfigInfo) -> DarknetBackbone:
     layers : List[Any] = []
 
     net_params : Optional[NetParams] = None
@@ -165,13 +203,16 @@ def build_bone(config_info : ConfigInfo) -> DarknetNetworkBone:
             config_info.path
         )
 
-    return DarknetNetworkBone(
+    return DarknetBackbone(
         net_params,
         layers
     )
         
 
-def read_darknet_bone_from_file(cfg_path : str) -> DarknetNetworkBone:
+def read_darknet_bone_from_file(cfg_path : str) -> DarknetBackbone:
+    if not path.exists(cfg_path):
+        raise Exception(f'darknet config path is not exist:{cfg_path}.')
+
     with open(cfg_path, 'r') as fh:
         lines = fh.readlines()
         blocks = parse_blocks(lines, cfg_path)
@@ -181,7 +222,7 @@ def read_darknet_bone_from_file(cfg_path : str) -> DarknetNetworkBone:
         return build_bone(config_info)
 
 
-def read_darknet_bone_from_str(data : str) -> DarknetNetworkBone:
+def read_darknet_bone_from_str(data : str) -> DarknetBackbone:
     lines = data.split('\n')
 
     blocks = parse_blocks(lines, None)

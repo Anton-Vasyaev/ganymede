@@ -119,8 +119,13 @@ class DarknetTorchDetector:
         if isinstance(output_modules[0], YoloModule):
             output_yolo_modules = cast(List[YoloModule], output_modules)
 
+            output_layers_params = [out.params for out in output_yolo_modules]
+
+            outputs = [out.output.detach().cpu().permute(0, 2, 3, 1).numpy() for out in output_yolo_modules]
+
             detection_batch = process_yolo_detections(
-                output_yolo_modules,
+                output_layers_params,
+                outputs,
                 self.model.net_params,
                 obj_thresholds,
                 nms_thresholds

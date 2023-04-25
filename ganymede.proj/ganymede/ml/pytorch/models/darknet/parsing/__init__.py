@@ -1,1 +1,1 @@
-from .parse_blocks import read_darknet_bone_from_file, read_darknet_bone_from_str
+from .parse_blocks import *

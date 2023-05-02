@@ -1,18 +1,8 @@
 import dependencies
 # python
-import ctypes
 import time
-from typing import List, cast
-# 3rd party
-import numpy as np
-import cv2 as cv
-import torch
-from pathlib import Path
-
+# project
 import ganymede.opencv as g_cv
-import ganymede.imaging as g_img
-import ganymede.draw    as g_draw
-import ganymede.ml.pytorch.tensor as g_tensor
 import ganymede.filesystem as g_fs
 # test
 from ganymede.ml.pytorch.detectors.darknet_torch_detector import DarknetTorchDetector

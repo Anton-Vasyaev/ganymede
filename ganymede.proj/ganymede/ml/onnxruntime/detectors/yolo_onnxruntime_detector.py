@@ -19,6 +19,10 @@ from ganymede.native.auxml.funcs import *
 import ganymede.ml.onnxruntime.validation as ort_valid
 from ...pytorch.models.darknet.parsing import *
 
+# ToDo
+import time
+from .auxiliary import make_yolo_v5_predictions
+
 
 @dataclass
 class DarknetConfigData:
@@ -60,8 +64,6 @@ class YoloOnnxRuntimeDetector:
 
     __input_name : str
 
-    __classes_count : int
-
     __aux_mat_size : int
 
     __input_batch : np.ndarray
@@ -80,9 +82,10 @@ class YoloOnnxRuntimeDetector:
         darknet_config       : Optional[str] = None,
         aux_mat_size         : int           = 1024,
         batch_size           : int           = 1,
-        input_image_type     : ImageType     = ImageType.UNKNOWN
+        input_image_type     : ImageType     = ImageType.UNKNOWN,
+        providers            : Optional[Any] = None
     ):
-        self.__session = ort.InferenceSession(model_path)
+        self.__session = ort.InferenceSession(model_path, providers=providers)
 
         self.__darknet_config_data = None
         if not darknet_config is None:
@@ -144,17 +147,17 @@ class YoloOnnxRuntimeDetector:
 
             self.__input_size = ImageSize(net_w, net_h, net_c)
 
-            self.__classes_count = network_bone.get_classes()
-
         else:
-            input = self.__session.get_inputs()[0]
+            inputs = self.__session.get_inputs()
+            input = inputs[0]
             b, c, h, w = input.shape
             
             self.__input_size = ImageSize(w, h, c)
 
-            output = self.__session.get_outputs()[0]
+            outputs = self.__session.get_outputs()
+            output  = outputs[0]
+            
             b, bbox_count, val_count = output.shape
-            self.__classes_count = val_count - 5
 
         self.__input_name = cast(str, self.__session.get_inputs()[0].name)
 
@@ -184,7 +187,63 @@ class YoloOnnxRuntimeDetector:
         in_w, in_h, in_c = self.__input_size.decompose()
 
         self.__current_batch_size = batch_size
-        self.__input_batch.resize((batch_size, in_h, in_w, in_c))
+        self.__input_batch.resize((batch_size, in_h, in_w, in_c), refcheck=False)
+
+
+    def __postprocessing_darknet_config(
+        self, 
+        net_output        : List[np.ndarray],
+        object_thresholds : List[float],
+        nms_thresholds    : List[float]
+    ) -> ObjectDetectionBatch:
+        output_params = self.__darknet_config_data.outputs_params
+        if isinstance(output_params[0], YoloLayer):
+            yolo_output_params = cast(List[YoloLayer], output_params)
+
+            preds = cast(List[np.ndarray], net_output)
+            preds = [p.transpose(0, 2, 3, 1).copy() for p in preds]
+
+            detections = process_yolo_detections(
+                yolo_output_params,
+                preds,
+                self.__darknet_config_data.config_backbone.net_params,
+                object_thresholds,
+                nms_thresholds
+            )
+
+            return detections
+        else:
+            raise Exception(f'not implemented postrocessing for output layer:{type(output_params[0])}.')
+        
+    
+    def __postprocessing_sealed_output(
+        self,
+        net_output        : List[np.ndarray],
+        object_thresholds : List[float],
+        nms_thresholds    : List[float]
+    ) -> ObjectDetectionBatch:
+        in_w, in_h, in_c = self.__input_size.decompose()
+        
+        preds = cast(np.ndarray, net_output[0])
+
+        detections_batch : ObjectDetectionBatch = list()
+        for pred_idx in range(len(preds)):
+            pred = preds[pred_idx]
+
+            detections_batch.append(
+                make_yolo_v5_predictions(
+                    pred,
+                    in_w,
+                    in_h,
+                    nms_thresholds[pred_idx],
+                    object_thresholds[pred_idx],
+                    nms_thresholds[pred_idx]
+                )
+            )
+        
+        return detections_batch
+
+        
 
 #endregion
 
@@ -203,6 +262,8 @@ class YoloOnnxRuntimeDetector:
 
         in_w, in_h, in_c = self.__input_size.decompose()
 
+        # ToDo
+        start = time.time()
         # make batch
         for img_idx in range(len(input_batch)):
             image_handler = input_batch[img_idx]
@@ -226,28 +287,27 @@ class YoloOnnxRuntimeDetector:
         self.__input_batch /= 255.0
 
         input_batch_t = self.__input_batch.transpose(0, 3, 1, 2)
+        # ToDo
+        end = time.time()
+        print(f'preprocessing time:{end - start} sec.')
 
-        preds_a = self.__session.run(None, { self.__input_name : input_batch_t})
-        preds   = cast(List[np.ndarray], preds_a)
-        preds   = [p.transpose(0, 2, 3, 1).copy() for p in preds]
+        # ToDo
+        start = time.time()
+        net_output = self.__session.run(None, { self.__input_name : input_batch_t})
+        # ToDo
+        end = time.time()
+        print(f'propagate time:{end - start} sec.')
 
+
+        # ToDo
+        start = time.time()
+        detections : ObjectDetectionBatch = list()
         if not self.__darknet_config_data is None:
-            output_params = self.__darknet_config_data.outputs_params
-            if isinstance(output_params[0], YoloLayer):
-                yolo_output_params = cast(List[YoloLayer], output_params)
-
-                detections = process_yolo_detections(
-                    yolo_output_params,
-                    preds,
-                    self.__darknet_config_data.config_backbone.net_params,
-                    object_thresholds,
-                    nms_thresholds
-                )
-
-                return detections
-            else:
-                raise Exception(f'not implemented postrocessing for output layer:{type(output_params[0])}.')
+            detections = self.__postprocessing_darknet_config(net_output, object_thresholds, nms_thresholds)
         else:
-            raise Exception(f'not implemented postprocessing for sealed yolo output (batch_size, bbox_count, values).')
+            detections = self.__postprocessing_sealed_output(net_output, object_thresholds, nms_thresholds)
+        end = time.time()
+        print(f'postprocessing time:{end - start} sec.')
+        return detections
 
 #endregion

@@ -38,7 +38,8 @@ setup(
     url = 'https://github.com/Anton-Vasyaev/ganymede',
     install_requires = [
         'autofast>=0.2.1',
-        'Pillow>=9.0.0'
+        'Pillow>=9.0.0',
+        'pywin32>=306'
     ],
     requires_python='>=3.9.0',
     packages = find_packages(where='ganymede.proj'),

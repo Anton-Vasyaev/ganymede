@@ -17,6 +17,11 @@ def get_version():
         return re.search(r'^__version__ = [\'"]([^\'"]*)[\'"]', f.read(), re.M).group(1)
 
 
+class BinaryDistribution(Distribution):
+    def has_ext_modules(self):
+        return True
+
+
 LONG_DESCRIPTION = ''
 with open('README.md') as fh:
     LONG_DESCRIPTION = fh.read()
@@ -39,4 +44,5 @@ setup(
     packages = find_packages(where='ganymede.proj'),
     package_dir = {'': 'ganymede.proj'},
     package_data = {'': ['*.dll', '*.so']},
+    distclass=BinaryDistribution
 )

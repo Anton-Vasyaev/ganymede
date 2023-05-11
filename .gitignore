@@ -1,6 +1,7 @@
 __pycache__
 *.egg-info
 
+dist
 build
 win64
 linux64

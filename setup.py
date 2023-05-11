@@ -17,85 +17,6 @@ def get_version():
         return re.search(r'^__version__ = [\'"]([^\'"]*)[\'"]', f.read(), re.M).group(1)
 
 
-class BinaryDistribution(Distribution):
-    def has_ext_modules(self):
-        return True
-
-
-class CMakeConanExtension(Extension):
-
-    def __init__(
-        self, 
-        name, 
-        conan_update_dir, 
-        target
-    ):
-        # don't invoke the original build_ext for this special extension
-        super().__init__(name, sources=[])
-
-        self.conan_update_dir = conan_update_dir
-        self.target           = target
-
-
-class BuildCmakeDist(build_ext_orig):
-    extensions = [
-        CMakeConanExtension('auxml.export.proj', 'submodules/auxml', 'auxml_export')
-    ]
-
-
-    def run(self):
-        for ext in BuildCmakeDist.extensions:
-            self.build_cmake(ext)
-        super().run()
-
-
-    def build_cmake(self, ext : CMakeConanExtension):
-        setup_path = p.abspath(p.dirname(__file__))
-
-        # these dirs will be created in build_py, so if you don't have
-        # any python sources to bundle, the dirs will be missing
-        #build_temp = Path(self.build_temp)
-        #build_temp.mkdir(parents=True, exist_ok=True)
-        #extdir = Path(self.get_ext_fullpath(ext.name))
-        #extdir.mkdir(parents=True, exist_ok=True)
-
-        # update conan
-        conan_update_dir = p.abspath(ext.conan_update_dir)
-        os.chdir(conan_update_dir)
-        
-        if os.name == 'nt':
-            self.spawn(['conan_update_x64.bat'])
-        elif os.name == 'posix':
-            self.spawn(['bash', 'conan_update_x64.sh'])
-        else:
-            raise Exception(f'Not expected os:{os.name}')
-        os.chdir(setup_path)
-
-        # cmake
-        cmake_dir_p = Path(ext.name).absolute()
-        cmake_build_dir_p = cmake_dir_p / 'build'
-
-        # configuration
-        cmake_args = [
-            '--no-warn-unused-cli',
-            '-DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE',
-            '-DCMAKE_BUILD_TYPE:STRING=Release',
-            '-S', str(cmake_dir_p), 
-            '-B', str(cmake_build_dir_p),
-        ]
-        self.spawn(['cmake'] + cmake_args)
-
-        # build
-        cmake_args = [
-            '--build', str(cmake_build_dir_p),
-            '--config', 'Release',
-            '--target', ext.target,
-        ]
-        self.spawn(['cmake'] + cmake_args)
-
-        os.chdir(setup_path)
-
-
 LONG_DESCRIPTION = ''
 with open('README.md') as fh:
     LONG_DESCRIPTION = fh.read()
@@ -111,14 +32,11 @@ setup(
     keywords = '',
     url = 'https://github.com/Anton-Vasyaev/ganymede',
     install_requires = [
-        'autofast>=0.2.1'
+        'autofast>=0.2.1',
+        'Pillow>=9.0.0'
     ],
     requires_python='>=3.9.0',
     packages = find_packages(where='ganymede.proj'),
     package_dir = {'': 'ganymede.proj'},
     package_data = {'': ['*.dll', '*.so']},
-    distclass = BinaryDistribution,
-    cmdclass = {
-        'build_ext': BuildCmakeDist,
-    }
 )

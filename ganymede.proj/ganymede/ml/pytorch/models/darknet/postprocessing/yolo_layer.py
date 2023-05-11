@@ -10,7 +10,7 @@ from nameof import nameof
 # project
 from ..model.modules        import YoloModule
 from ..data                 import YoloBox
-from ..parsing.parse_blocks import NetParams
+from .....darknet.parse_blocksckscks import NetParams
 
 
 YoloDetectionList  = List[YoloBox]

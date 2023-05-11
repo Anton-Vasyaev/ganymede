@@ -5,9 +5,8 @@ import numpy as np
 from ganymede.ml.data import ObjectDetection
 # project
 from ..interop import *
-from ....ml.pytorch.models.darknet.postprocessing.yolo_layer import ObjectDetectionBatch, ObjectDetectionList
-from ....ml.pytorch.models.darknet.model.modules import YoloModule
-from ....ml.pytorch.models.darknet.parsing.data import NetParams, YoloLayer
+from ....ml.data import ObjectDetectionBatch, ObjectDetectionList
+from ....ml.darknet.data import NetParams, YoloLayer
 
 from ..auxiliary import *
 
@@ -108,10 +107,10 @@ def convert_yolo_modules_to_native(
 
 def process_yolo_detections(
     output_layers_params  : List[YoloLayer],
-    outputs : List[np.ndarray],
-    net_params_a   : NetParams,
-    obj_thresholds : List[float],
-    nms_thresholds : List[float]
+    outputs               : List[np.ndarray],
+    net_params_a          : NetParams,
+    obj_thresholds        : List[float],
+    nms_thresholds        : List[float]
 ) -> ObjectDetectionBatch:
     
     detections_batch_handler        = object_handler()

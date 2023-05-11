@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 from ganymede.rw import BinaryPackageReader
 # project
-from ..parsing.parse_blocks     import *
+from .....darknet.parse_blocksckscks     import *
 from ..parsing.data.params      import *
 from .modules.data.darknet_forward_size import DarknetForwardSize
 from .modules import *

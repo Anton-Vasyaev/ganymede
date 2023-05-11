@@ -17,11 +17,10 @@ from ganymede.imaging import ImageSize, ImageType, NumpyImageHandler, get_cv_col
 from ganymede.native.auxml.funcs import *
 
 import ganymede.ml.onnxruntime.validation as ort_valid
-from ...pytorch.models.darknet.parsing import *
 
-# ToDo
-import time
-from .auxiliary import make_yolo_v5_predictions
+from ...darknet import *
+
+from ganymede.native.auxml.funcs import process_yolo_sealead_output_detections
 
 
 @dataclass
@@ -226,24 +225,16 @@ class YoloOnnxRuntimeDetector:
         
         preds = cast(np.ndarray, net_output[0])
 
-        detections_batch : ObjectDetectionBatch = list()
-        for pred_idx in range(len(preds)):
-            pred = preds[pred_idx]
+        detections_batch = process_yolo_sealead_output_detections(
+            preds,
+            object_thresholds,
+            nms_thresholds,
+            in_w,
+            in_h
+        )
 
-            detections_batch.append(
-                make_yolo_v5_predictions(
-                    pred,
-                    in_w,
-                    in_h,
-                    nms_thresholds[pred_idx],
-                    object_thresholds[pred_idx],
-                    nms_thresholds[pred_idx]
-                )
-            )
-        
         return detections_batch
 
-        
 
 #endregion
 
@@ -262,8 +253,6 @@ class YoloOnnxRuntimeDetector:
 
         in_w, in_h, in_c = self.__input_size.decompose()
 
-        # ToDo
-        start = time.time()
         # make batch
         for img_idx in range(len(input_batch)):
             image_handler = input_batch[img_idx]
@@ -287,27 +276,17 @@ class YoloOnnxRuntimeDetector:
         self.__input_batch /= 255.0
 
         input_batch_t = self.__input_batch.transpose(0, 3, 1, 2)
-        # ToDo
-        end = time.time()
-        print(f'preprocessing time:{end - start} sec.')
 
-        # ToDo
-        start = time.time()
+        # propagate
         net_output = self.__session.run(None, { self.__input_name : input_batch_t})
-        # ToDo
-        end = time.time()
-        print(f'propagate time:{end - start} sec.')
 
-
-        # ToDo
-        start = time.time()
+        # postprocessing
         detections : ObjectDetectionBatch = list()
         if not self.__darknet_config_data is None:
             detections = self.__postprocessing_darknet_config(net_output, object_thresholds, nms_thresholds)
         else:
             detections = self.__postprocessing_sealed_output(net_output, object_thresholds, nms_thresholds)
-        end = time.time()
-        print(f'postprocessing time:{end - start} sec.')
+
         return detections
 
 #endregion

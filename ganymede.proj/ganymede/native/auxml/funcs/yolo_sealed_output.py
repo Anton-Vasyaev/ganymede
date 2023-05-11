@@ -36,9 +36,11 @@ def __validate_yolo_sealaed_output_array(
     
 
 def process_yolo_sealead_output_detections(
-    yolo_output : np.ndarray,
+    yolo_output       : np.ndarray,
     object_thresholds : List[float],
-    nms_thresholds    : List[float]
+    nms_thresholds    : List[float],
+    net_width         : int,
+    net_height        : int
 ) -> ObjectDetectionBatch:
     __validate_yolo_sealaed_output_array(yolo_output, object_thresholds, nms_thresholds)
 
@@ -54,6 +56,9 @@ def process_yolo_sealead_output_detections(
     obj_thresholds_array = (c_float * len(object_thresholds))(*object_thresholds)
     nms_thresholds_array = (c_float * len(nms_thresholds))(*nms_thresholds)
 
+    net_width_c  = c_int32(net_width)
+    net_height_c = c_int32(net_height)
+
     detections_batch_handler        = object_handler()
     detections_batch_handler.object = c_void_p(0)
 
@@ -65,6 +70,8 @@ def process_yolo_sealead_output_detections(
             classes_count_c,
             obj_thresholds_array,
             nms_thresholds_array,
+            net_width_c,
+            net_height_c,
             detections_batch_handler
         )
         validate_return_status(return_status)

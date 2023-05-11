@@ -8,7 +8,7 @@ import ganymede.ml.pytorch.tensor as g_tensor
 import ganymede.imaging as g_img
 from ganymede.ml.data import *
 # project
-from ..models.darknet                       import DarknetModel
+from ...darknet                       import DarknetModel
 from ..models.darknet.model.modules         import YoloModule, DarknetLayerModule
 from ganymede.native.auxml.funcs.yolo_layer import process_yolo_detections
 from ..models.darknet.postprocessing.yolo_layer import postprocessing_yolo_layer

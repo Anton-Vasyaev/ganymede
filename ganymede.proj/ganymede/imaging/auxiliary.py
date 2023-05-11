@@ -20,3 +20,5 @@ def is_img_file_format(format : str) -> bool:
     format = format.lower()
 
     return is_any(format, IMAGE_FILE_FORMATS)
+
+

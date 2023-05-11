@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "ganymede.proj"
+		},
+		{
+			"path": "draft.proj"
+		},
+		{
+			"path": "auxml.export.proj"
+		},
+		{
+			"path": "submodules/auxml/auxml"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"vector": "cpp",
+			"sstream": "cpp"
+		}
+	}
+}

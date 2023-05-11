@@ -24,7 +24,7 @@ def is_equal_types_b(objects : List[Any]) -> bool:
     if len(objects) < 1:
         raise ValueError(f'Invalid len of objects:{len(objects)}.')
 
-    first_ob_type = objects[0]
+    first_ob_type = type(objects[0])
 
     for ob in objects:
         if first_ob_type != type(ob):

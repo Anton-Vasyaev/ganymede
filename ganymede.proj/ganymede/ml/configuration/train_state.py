@@ -18,24 +18,10 @@ class CheckpointInfo:
     accuracy    : float
 
 
+@dataclass
 class TrainState:
     train_params : TrainParameters
     env_params   : EnvironmentParameters
-
-
-    @staticmethod
-    def load_from_dict(config : dict):
-        train_params = TrainParameters.load_from_dict(config['train'])
-        env_params   = EnvironmentParameters.load_from_dict(config['environment'])
-
-        return TrainState(train_params, env_params)
-        
-
-    @staticmethod
-    def load_from_config_file(path):
-        config = g_json.load_from_file(path)
-
-        return TrainState.load_from_dict(config)
 
 
     def __init__(

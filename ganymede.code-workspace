@@ -7,6 +7,9 @@
 			"path": "draft.proj"
 		},
 		{
+			"path": "examples.proj"
+		},
+		{
 			"path": "auxml.export.proj"
 		},
 		{

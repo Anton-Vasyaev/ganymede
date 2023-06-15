@@ -1,6 +1,6 @@
 # load conan dependencies
 cd submodules/auxml
-conan_update_x64.bat
+bash conan_update_x64.sh
 cd ../..
 
 

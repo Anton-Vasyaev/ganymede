@@ -11,9 +11,10 @@ import ganymede.opencv as g_cv
 import ganymede.json   as g_js
 
 import ganymede.math.point2 as m_p2
-import ganymede.math.bbox2  as m_bbox2
 
 from ganymede.math.primitives import Polygon2, BBox2
+
+from ..i_dataset_loader import IDatasetLoader
 
 from ..data import SegmentObjectMarkup
 
@@ -60,7 +61,8 @@ def decode_coco_segmentation_list(node : Node) -> List[Polygon2]:
     for segment_node in list_node.list_data:
         if not isinstance(segment_node, ListNode):
             raise Exception(
-                f'Failed to decode segmentation polygon. expected {ListNode}, gotted:{type(segment_node)}.'
+                f'Failed to decode segmentation polygon. '
+                f'expected {ListNode}, gotted:{type(segment_node)}.'
             )
         
         segment_list_node = cast(ListNode, segment_node)
@@ -120,22 +122,31 @@ class CocoExampleInfo:
     
 
 
-class CocoDatasetLoader:
+class CocoDatasetLoader(IDatasetLoader[np.ndarray, List[SegmentObjectMarkup]]):
     ''' 
     Provides loading for COCO dataset(Common Objects in Context).
     See information about COCO: https://cocodataset.org/#home
     '''
-    
+
+#region data
+
     __images_dir : str
     
-    __allowed_classes : Optional[List[str]]
+    __allowed_classes : List[str]
+
+    __enable_empty_markup : bool
 
     __categories : Dict[int, Any]
 
     __examples : List[CocoJsonData]
 
+    __image_id_access : Dict[int, int]
 
-    def filter_examples(self, data_list : List[CocoJsonData]) -> List[CocoJsonData]:
+#endregion
+
+#region private_methods 
+
+    def __filter_examples(self, data_list : List[CocoJsonData]) -> List[CocoJsonData]:
         filtered_data_list = list()
 
         for data in data_list:
@@ -152,26 +163,31 @@ class CocoDatasetLoader:
                 if not isinstance(segmentation_list, list):
                     validate_flag = False
                     break
-
-                if category_name in self.__allowed_classes or self.__allowed_classes == None:
+                
+                if category_name in self.__allowed_classes:
                     filtered_anno_list.append(anno)
 
-            if validate_flag and len(filtered_anno_list) != 0:
+            if validate_flag and (len(filtered_anno_list) != 0 or self.__enable_empty_markup):
                 copy_data = deepcopy(data)
                 copy_data.annotations = filtered_anno_list
                 filtered_data_list.append(copy_data)
 
         return filtered_data_list
 
+#endregion
+
+#region construct_and_destruct
 
     def __init__(
         self,
-        markup_path     : str,
-        images_dir      : str,
-        allowed_classes : Optional[List[str]] = None
+        markup_path         : str,
+        images_dir          : str,
+        allowed_classes     : Optional[List[str]] = None,
+        enable_empty_markup : bool                = False 
     ):
-        self.__images_dir      = images_dir
-        self.__allowed_classes = allowed_classes
+        self.__images_dir = images_dir
+
+        self.__enable_empty_markup = enable_empty_markup
 
         categories_dict : Dict[int, Any] = dict()
         images_dict     : Dict[int, Any] = dict()
@@ -188,6 +204,13 @@ class CocoDatasetLoader:
 
             images = data_json['images']
         self.__categories = categories_dict
+
+        if allowed_classes is None:
+            allowed_classes = list()
+            for category_id, category in self.__categories.items():
+                category_name = category['name']
+                allowed_classes.append(category_name)
+        self.__allowed_classes = allowed_classes
 
         # loading images
         for idx in range(len(images)):
@@ -214,14 +237,54 @@ class CocoDatasetLoader:
             
             examples.append(CocoJsonData(image, annotation))
 
-        self.__examples = self.filter_examples(examples)
+        self.__examples = self.__filter_examples(examples)
+        self.__examples.sort(key = lambda e : e.image['id'])
 
+        # form image id access
+        self.__image_id_access = dict()
+        for example_id in range(len(self.__examples)):
+            example = self.__examples[example_id]
+            image   = deserialize_config(Image, example.image)
+
+            self.__image_id_access[image.id] = example_id
+
+#endregion
+
+#region IDatasetLoader implementation
 
     def __len__(self) -> int:
         return len(self.__examples)
-    
+
 
     def __getitem__(self, idx : int) -> Tuple[np.ndarray, List[SegmentObjectMarkup]]:
+        img = self.get_image(idx)
+
+        objects = self.get_markup(idx)
+
+        return img, objects
+
+#endregion
+ 
+#region methods
+
+    def get_class_names(self) -> Dict[int, str]:
+        class_names = dict()
+        for category_id, category in self.__categories.items():
+            name = category['name']
+            class_names[category_id] = name
+
+        return class_names
+    
+
+    def get_example_info(self, idx : int) -> CocoExampleInfo:
+        example = self.__examples[idx]
+
+        image = deserialize_config(Image, example.image)
+
+        return CocoExampleInfo(image)
+    
+
+    def get_markup(self, idx : int) -> List[SegmentObjectMarkup]:
         example = self.__examples[idx]
 
         image_data_json  = example.image
@@ -229,9 +292,6 @@ class CocoDatasetLoader:
 
         image_data = deserialize_config(Image, image_data_json)
         img_box    = (0.0, 0.0, image_data.width, image_data.height)
-
-        image_path = path.join(self.__images_dir, image_data.file_name)
-        img        = g_cv.imread(image_path)
 
         annotations_list : List[Annotation] = list()
         for anno_json in annotations_json:
@@ -254,21 +314,22 @@ class CocoDatasetLoader:
                 )
             )
 
-        return img, objects
+        return objects
     
 
-    def get_class_names(self) -> Dict[int, str]:
-        class_names = dict()
-        for category_id, category in self.__categories.items():
-            name = category['name']
-            class_names[category_id] = name
-
-        return class_names
-    
-
-    def get_example_info(self, idx : int) -> CocoExampleInfo:
+    def get_image(self, idx : int) -> np.ndarray:
         example = self.__examples[idx]
 
-        image = deserialize_config(Image, example.image)
+        image_data_json  = example.image
 
-        return CocoExampleInfo(image)
+        image_data = deserialize_config(Image, image_data_json)
+
+        image_path = path.join(self.__images_dir, image_data.file_name)
+        img        = g_cv.imread(image_path)
+
+        return img
+
+    def get_example_idx_by_image_id(self, image_id : int) -> int:
+        return self.__image_id_access[image_id]
+
+#endregion

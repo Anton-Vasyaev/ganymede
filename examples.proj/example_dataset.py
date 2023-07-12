@@ -9,7 +9,6 @@ import ganymede.random as g_rand
 from ganymede.dataset.i_dataset_loader import IDatasetLoader
 from ganymede.dataset.batch_sampler    import BatchSampler
 
-
 from ganymede.math.primitives import Color3
 
 

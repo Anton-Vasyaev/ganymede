@@ -12,7 +12,7 @@ from ganymede.ml.data import *
 from nameof import nameof
 # project
 import ganymede.imaging as g_img
-from ganymede.imaging import ImageSize, ImageType, NumpyImageHandler, get_cv_color_conversion_code
+from ganymede.imaging import ImageShape, ImageType, NumpyImageHandler, get_cv_color_conversion_code
 
 from ganymede.native.auxml.funcs import *
 
@@ -57,7 +57,7 @@ class YoloOnnxRuntimeDetector:
 
     __current_batch_size : int
     
-    __input_size : ImageSize
+    __input_size : ImageShape
 
     __input_image_type : ImageType
 
@@ -144,14 +144,14 @@ class YoloOnnxRuntimeDetector:
             net_h = network_bone.net_params.height
             net_c = network_bone.net_params.channels
 
-            self.__input_size = ImageSize(net_w, net_h, net_c)
+            self.__input_size = ImageShape(net_w, net_h, net_c)
 
         else:
             inputs = self.__session.get_inputs()
             input = inputs[0]
             b, c, h, w = input.shape
             
-            self.__input_size = ImageSize(w, h, c)
+            self.__input_size = ImageShape(w, h, c)
 
             outputs = self.__session.get_outputs()
             output  = outputs[0]

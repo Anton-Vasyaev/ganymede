@@ -17,6 +17,7 @@ from .i_dataset_loader import IDatasetLoader
 InputT  = TypeVar('InputT')
 TargetT = TypeVar('TargetT')
 
+BatchType = Tuple[List[InputT], List[TargetT]]
 
 
 def load_img_and_target_thread_func(
@@ -58,7 +59,7 @@ class BatchSampler(Generic[InputT, TargetT]):
         
         self.__indices = np.arange(len(dataset_loader)).tolist()
 
-        self.__executor = None
+        self.__executor = concurrent.futures.ThreadPoolExecutor()
         if self.__max_workers != 1:
             self.__executor = concurrent.futures.ThreadPoolExecutor(max_workers=self.__max_workers)
 
@@ -75,7 +76,7 @@ class BatchSampler(Generic[InputT, TargetT]):
     def __len__(self) -> int: return self.__size
 
 
-    def __getitem__(self, idx : int) -> Tuple[List[InputT], List[TargetT]]:
+    def __getitem__(self, idx : int) -> BatchType: # Tuple[List[InputT], List[TargetT]]:
         if idx < 0 or idx >= self.__size:
             raise Exception(f'invalid idx:{idx}, size:{self.__size}')
 
@@ -90,7 +91,7 @@ class BatchSampler(Generic[InputT, TargetT]):
             return self.threadpool_getitem(selected_indices)
 
 
-    def current_thread_getitem(self, indices : List[int]) -> Tuple[InputT, TargetT]:
+    def current_thread_getitem(self, indices : List[int]) -> BatchType: # Tuple[List[InputT], List[TargetT]]:
         images_list = []
         target_list = []
 
@@ -103,7 +104,7 @@ class BatchSampler(Generic[InputT, TargetT]):
         return images_list, target_list
         
 
-    def threadpool_getitem(self, indices):
+    def threadpool_getitem(self, indices : List[int]) -> BatchType:  #Tuple[List[InputT], List[TargetT]]:
         images_list = []
         target_list = []
 

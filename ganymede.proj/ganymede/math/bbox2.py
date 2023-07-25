@@ -4,7 +4,7 @@ from numbers import Number
 # project
 import ganymede.math.auxiliary as m_aux
 import ganymede.math.point2 as m_p2
-from ganymede.math.primitives import BBox2, Point2, Size2
+from ganymede.math.primitives import BBox2, Point2, Size2, Vector2
 
 
 def width(bbox: BBox2) -> float:
@@ -101,35 +101,39 @@ def center(bbox: BBox2) -> Point2:
     return (l + r) / 2, (t + b) / 2
 
 
-def iom(v: BBox2, z: BBox2) -> float:
-    vx1, vy1, vx2, vy2 = v
-    zx1, zy1, zx2, zy2 = z
+def intersection(bbox1 : BBox2, bbox2 : BBox2) -> BBox2:
+    l1, t1, r1, b1 = bbox1
+    l2, t2, r2, b2 = bbox2
 
-    l = max(vx1, zx1)
-    r = min(vx2, zx2)
-    t = max(vy1, zy1)
-    b = min(vy2, zy2)
+    l = max(l1, l2)
+    r = min(t1, t2)
+    t = max(r1, r2)
+    b = min(b1, b2)
+
+    return l, r, t, b
+    
+
+def iom(bbox1: BBox2, bbox2: BBox2) -> float:
+    inter = intersection(bbox1, bbox2)
+
+    l, t, r, b = inter
 
     if l >= r or t >= b:
         return 0.0
 
-    v_area = area(v)
-    z_area = area(z)
-    min_area = min(v_area, z_area)
+    area1 = area(bbox1)
+    area2 = area(bbox2)
+    min_area = min(area1, area2)
 
-    inter_area = area((l, t, r, b))
+    inter_area = area(inter)
 
     return inter_area / min_area
 
 
-def iou(z : BBox2, v : BBox2) -> float:
-    vx1, vy1, vx2, vy2 = v
-    zx1, zy1, zx2, zy2 = z
+def iou(bbox1 : BBox2, bbox2 : BBox2) -> float:
+    inter = intersection(bbox1, bbox2)
 
-    l = max(vx1, zx1)
-    r = min(vx2, zx2)
-    t = max(vy1, zy1)
-    b = min(vy2, zy2)
+    l, t, r, b = inter
 
     if l >= r or t >= b:
         return 0.0
@@ -137,7 +141,7 @@ def iou(z : BBox2, v : BBox2) -> float:
     v_area = area(v)
     z_area = area(z)
 
-    inter_area = area((l, t, r, b))
+    inter_area = area(inter)
     union_area = z_area + v_area - inter_area
 
     return inter_area / union_area
@@ -172,3 +176,14 @@ def reverse_normalize_on_contour(src_bbox: BBox2, contour: BBox2) -> BBox2:
     p2 = m_p2.reverse_normalize_on_contour(p2, contour)
 
     return from_points(p1, p2)
+
+
+def move_from_vector(bbox : BBox2, vec : Vector2) -> BBox2:
+    x1, y1, x2, y2 = bbox
+
+    vx, vy = vec
+
+    x1, y1 = x1 + vx, y1 + vy
+    x2, y2 = x2 + vx, y2 + vy
+
+    return x1, y1, x2, y2

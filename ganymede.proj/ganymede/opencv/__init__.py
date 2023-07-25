@@ -1,3 +1,4 @@
+from .auxiliary      import *
 from .data           import *
 from .draw           import *
 from .input_output   import *

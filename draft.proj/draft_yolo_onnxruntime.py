@@ -19,13 +19,13 @@ def draft_yolo_onnxruntime():
     #cfg_path     = r'D:\data\models\work\unifint\human\darknet\yolov7_tiny_person.cfg'
     #model_path  = r'D:\data\models\work\unifint\human\darknet\yolov7_tiny_person.onnx'
 
-    #cfg_path     = r'D:\data\models\work\unifint\human\darknet\yolov4_tiny_person.cfg'
-    #model_path = r'D:\data\models\work\unifint\human\darknet\yolov4_tiny_person.onnx'
+    cfg_path     = r'D:\data\models\work\unifint\human\darknet\yolov4_tiny_person.cfg'
+    model_path = r'D:\data\models\work\unifint\human\darknet\yolov4_tiny_person.onnx'
 
-    cfg_path   = None
+    #cfg_path   = None
     #model_path = r'D:\data\models\work\unifint\human\pytorch\yolov7.onnx'
 
-    model_path = r'D:\data\models\work\unifint\human\onnx\model.dynamic.onnx'
+    #model_path = r'D:\data\models\work\unifint\human\onnx\model.dynamic.onnx'
     
     images_path  = r'D:\data\test_images'
 
@@ -60,7 +60,7 @@ def draft_yolo_onnxruntime():
             g_cv.imshow('debug', show_img)
 
     times_n    = 25
-    batch_size = 4
+    batch_size = 1
 
     detections = detector.detect([img_handler] * batch_size, [0.4] * batch_size, [0.25] * batch_size)
     
@@ -82,7 +82,9 @@ def draft_yolo_onnxruntime():
         total_time += (end - start)
 
     seconds_per_image = total_time / (times_n * batch_size)
-    print(f'process time per image:{seconds_per_image} sec')
+
+    fps = 1 / seconds_per_image
+    print(f'performance per image:{fps} fps.')
     
     if visualise_detections:
         for img_path in images_path_list:

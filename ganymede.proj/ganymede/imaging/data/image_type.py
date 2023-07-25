@@ -4,7 +4,6 @@ from enum   import IntEnum, auto
 from nameof import nameof
 
 
-
 class ImageType(IntEnum):
     UNKNOWN = auto()
 

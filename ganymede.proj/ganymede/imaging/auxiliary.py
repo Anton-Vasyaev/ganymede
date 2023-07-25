@@ -1,7 +1,6 @@
 # 3rd party
 import numpy as np
 # project
-from ganymede.core import is_any
 
 IMAGE_FILE_FORMATS = [
     'png',
@@ -19,6 +18,4 @@ def get_channels(img : np.ndarray) -> int:
 def is_img_file_format(format : str) -> bool:
     format = format.lower()
 
-    return is_any(format, IMAGE_FILE_FORMATS)
-
-
+    return format in IMAGE_FILE_FORMATS

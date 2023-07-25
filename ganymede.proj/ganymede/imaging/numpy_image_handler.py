@@ -5,7 +5,7 @@ import numpy as np
 
 from nameof import nameof
 # project
-from .image_type import ImageType
+from .data.image_type import ImageType
 from .auxiliary  import get_channels
 
 

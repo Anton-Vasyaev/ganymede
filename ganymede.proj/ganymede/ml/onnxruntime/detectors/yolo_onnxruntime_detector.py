@@ -12,7 +12,8 @@ from ganymede.ml.data import *
 from nameof import nameof
 # project
 import ganymede.imaging as g_img
-from ganymede.imaging import ImageShape, ImageType, NumpyImageHandler, get_cv_color_conversion_code
+from ganymede.imaging import ImageShape, ImageType, NumpyImageHandler
+from ganymede.opencv import get_cv_color_conversion_code
 
 from ganymede.native.auxml.funcs import *
 

@@ -45,8 +45,6 @@ class LibraryModule:
                 self.handler = ctypes.CDLL(p.join(binary_path, 'auxml.dll'))
             elif os.name == 'posix' and platform.system() == 'Linux':
                 POSIX_LOAD_LIBRARIES.append(CDLL('libstdc++.so.6'))
-                print(POSIX_LOAD_LIBRARIES)
-                print(f'load std')
                 self.handler = CDLL(p.join(binary_path, 'libauxml.so'))
         except Exception as exc:
             print(f'Failed to load native libraries:{exc}')

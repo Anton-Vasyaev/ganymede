@@ -181,8 +181,6 @@ def fill_polygon(
 
     np_coords = np.int32(np_coords)
 
-    # ToDo
-
     cv.fillPoly(img, np_coords, color)
 
 

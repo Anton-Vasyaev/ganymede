@@ -63,3 +63,16 @@ def get_cv_color_conversion_code(
         raise ValueError(
             f"not find color conversions from '{src_type}' to '{dst_type}'."
         )
+
+
+DEFAULT_CHANNELS_CODES = {
+    1 : ImageType.GRAY,
+    3 : ImageType.BGR,
+    4 : ImageType.BGRA
+}
+
+def get_default_cv_color_code(channels : int) -> int:
+    if not channels in DEFAULT_CHANNELS_CODES:
+        raise Exception(f'not exist default OpenCV color code for channels:{channels}')
+    
+    return DEFAULT_CHANNELS_CODES[channels]

@@ -1,2 +1,2 @@
 from .cv_video_reader import CvVideoReader
-from .real_time_video_reader import RealTimeVideoReader
+from .cv_real_time_video_reader import CvRealTimeVideoReader

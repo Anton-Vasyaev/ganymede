@@ -1,12 +1,17 @@
 # python
 import os
-from typing import Tuple
+from typing import Tuple, Optional
 # 3rd party
 import numpy as np
 import cv2 as cv # type: ignore
 
 
+ReadResult = Tuple[Optional[np.ndarray], Optional[int]]
+
 class CvVideoReader:
+    __capture : cv.VideoCapture
+
+
     def __init__(self, path : str):
         if not os.path.exists(path):
             raise Exception(f'cannot open video_file, reason: not exist, path:{path}')
@@ -14,6 +19,10 @@ class CvVideoReader:
         self.capture = cv.VideoCapture(path)
 
         self.current_position = 0
+    
+
+    def get_capture(self) -> cv.VideoCapture:
+        return self.__capture
     
 
     def get_frame_count(self) -> int:
@@ -37,7 +46,7 @@ class CvVideoReader:
         self.capture.set(cv.CAP_PROP_POS_MSEC, position / 1000)
 
 
-    def read(self) -> Tuple[np.ndarray, int]:
+    def read(self) -> ReadResult:
         ret, frame = self.capture.read()
 
         if not ret: return None, None
@@ -48,7 +57,7 @@ class CvVideoReader:
         return frame, self.current_position
 
 
-    def skip_and_read(self, msecs) -> Tuple[np.ndarray, int]:
+    def skip_and_read(self, msecs) -> ReadResult:
         need_position = self.current_position + msecs
 
         while True:

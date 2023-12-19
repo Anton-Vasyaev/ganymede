@@ -83,7 +83,7 @@ class YoloOnnxRuntimeDetector:
         aux_mat_size         : int           = 1024,
         batch_size           : int           = 1,
         input_image_type     : ImageType     = ImageType.UNKNOWN,
-        providers            : Optional[Any] = None
+        providers            : Optional[Any] = ['CPUExecutionProvider']
     ):
         self.__session = ort.InferenceSession(model_path, providers=providers)
 

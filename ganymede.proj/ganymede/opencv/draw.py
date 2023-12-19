@@ -20,6 +20,7 @@ def draw_circle(
     color : AlgTuple3,
     radius : int = 1,
     thickness : int = 1,
+    line_type : int = cv.FILLED,
     normalize_coords = True
 ):
     r, g, b = color
@@ -33,7 +34,7 @@ def draw_circle(
 
     r, g, b = color
 
-    cv.circle(img, (x, y), radius, color, thickness)
+    cv.circle(img, (x, y), radius, color, thickness, line_type)
 
 
 def draw_line_p(

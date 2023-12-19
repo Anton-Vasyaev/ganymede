@@ -83,8 +83,8 @@ def scale(
     w *= scale_w
     h *= scale_h
 
-    x1, y1 = xc - w / 2, yc - w / 2
-    x2, y2 = xc + w / 2, yc + w / 2
+    x1, y1 = xc - w / 2, yc - h / 2
+    x2, y2 = xc + w / 2, yc + h / 2
 
     return [x1, y1, x2, y2]
 
@@ -106,11 +106,11 @@ def intersection(bbox1 : BBox2, bbox2 : BBox2) -> BBox2:
     l2, t2, r2, b2 = bbox2
 
     l = max(l1, l2)
-    r = min(t1, t2)
-    t = max(r1, r2)
+    t = max(t1, t2)
+    r = min(r1, r2)
     b = min(b1, b2)
 
-    return l, r, t, b
+    return l, t, r, b
     
 
 def iom(bbox1: BBox2, bbox2: BBox2) -> float:
@@ -130,8 +130,8 @@ def iom(bbox1: BBox2, bbox2: BBox2) -> float:
     return inter_area / min_area
 
 
-def iou(bbox1 : BBox2, bbox2 : BBox2) -> float:
-    inter = intersection(bbox1, bbox2)
+def iou(z : BBox2, v : BBox2) -> float:
+    inter = intersection(z, v)
 
     l, t, r, b = inter
 
@@ -187,3 +187,11 @@ def move_from_vector(bbox : BBox2, vec : Vector2) -> BBox2:
     x2, y2 = x2 + vx, y2 + vy
 
     return x1, y1, x2, y2
+
+
+def contain(bbox : BBox2, point : Point2) -> bool:
+    x1, y1, x2, y2 = bbox
+
+    px, py = point
+
+    return x1 <= px and px <= x2 and y1 <= py and py <= y2

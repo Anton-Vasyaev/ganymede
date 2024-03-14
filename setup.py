@@ -35,7 +35,7 @@ with open('README.md') as fh:
 
 
 INSTALL_REQUIRES = [
-    'autofast>=0.2.1',
+    'autofast>=0.3.0',
     'Pillow>=9.0.0',
 ]
 if os.name == 'Windows':

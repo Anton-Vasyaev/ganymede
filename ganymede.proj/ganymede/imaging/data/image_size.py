@@ -11,3 +11,7 @@ class ImageSize:
 
     def decompose(self) -> Tuple[int, int]:
         return self.width, self.height
+    
+
+    def to_tuple(self) -> Tuple[int, int]:
+        return self.width, self.height

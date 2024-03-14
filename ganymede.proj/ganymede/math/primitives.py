@@ -9,6 +9,9 @@ AlgTuple2 = Tuple[float, float]
 AlgTuple3 = Tuple[float, float, float]
 ''' Algebraic tuple, contain three elements. '''
 
+AlgTuple4 = Tuple[float, float, float]
+''' Algebraic tuple, contain four elements. '''
+
 Point2 = AlgTuple2
 ''' Alias for `AlgTuple2`. Represent two-dimensional coordinate. '''
 
@@ -29,6 +32,9 @@ Size3 = AlgTuple3
 
 Color3 = AlgTuple3
 ''' Alias for `AlgTuple3`. Represent RGB-color. '''
+
+Vector4 = AlgTuple4
+''' Alias for `AlgTuple4`. Represent four-dimensional vector (x, y, z, w).'''
 
 BBox2 = Tuple[float, float, float, float]
 ''' Alias for tuple of four float value. Represent bounding box in two-dimensional measurement. '''
@@ -85,6 +91,10 @@ def is_alg_tuple2(ob: Any) -> bool:
 
 def is_alg_tuple3(ob: Any) -> bool:
     return is_alg_tuple_n(ob, 3)
+
+
+def is_alg_tuple4(ob : Any) -> bool:
+    return is_alg_tuple_n(ob, 4)
 
 
 def is_point2(ob: Any) -> bool:

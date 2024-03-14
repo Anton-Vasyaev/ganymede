@@ -18,6 +18,17 @@ CV_COLOR_CONVERSIONS_CODE = {
 
         ImageType.BGRA: cv.COLOR_RGB2BGRA,
     },
+
+    ImageType.BGR: {
+        ImageType.RGB: cv.COLOR_BGR2RGB,
+
+        ImageType.GRAY: cv.COLOR_BGR2GRAY,
+
+        ImageType.RGBA: cv.COLOR_BGR2RGBA,
+        
+        ImageType.BGRA: cv.COLOR_BGR2BGRA
+    },
+
     ImageType.GRAY: {
         ImageType.RGB: cv.COLOR_GRAY2RGB,
 
@@ -27,6 +38,7 @@ CV_COLOR_CONVERSIONS_CODE = {
 
         ImageType.BGRA: cv.COLOR_GRAY2BGRA,
     },
+
     ImageType.RGBA: {
         ImageType.RGB: cv.COLOR_RGBA2RGB,
 
@@ -36,6 +48,7 @@ CV_COLOR_CONVERSIONS_CODE = {
 
         ImageType.BGRA: cv.COLOR_RGBA2BGRA,
     },
+
     ImageType.BGRA: {
         ImageType.RGB: cv.COLOR_BGRA2RGB,
 

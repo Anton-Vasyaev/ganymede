@@ -109,6 +109,8 @@ class YoloOnnxRuntimeDetector:
         inputs = self.__session.get_inputs()
         ort_valid.is_convolutional_shape_format(inputs[0], nameof(YoloOnnxRuntimeDetector))
 
+        net_c : int = 0
+
         if not self.__darknet_config_data is None:
             config_backbone = self.__darknet_config_data.config_backbone
             config_backbone.validate()
@@ -128,12 +130,14 @@ class YoloOnnxRuntimeDetector:
             output = self.__session.get_outputs()[0]
             ort_valid.number_of_dimensions_equal(output, 3, nameof(YoloOnnxRuntimeDetector))
 
+            net_c = inputs[0].shape[1]
+
         if self.__input_image_type != ImageType.UNKNOWN:
             img_channels = self.__input_image_type.get_channels()
-            if img_channels != self.__input_size.channels:
+            if img_channels != net_c:
                 raise Exception(
                     f'channels of network != channels of image type \'{self.__input_image_type}\':'
-                    f'{self.__input_size.channels} != {img_channels}.'
+                    f'{net_c} != {img_channels}.'
                 )
 
 

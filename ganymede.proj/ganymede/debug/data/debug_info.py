@@ -10,10 +10,10 @@ from .debug_tree_info import DebugTreeInfo
 class DebugInfo:
     image : DebugImageInfo = field(default_factory=DebugImageInfo)
 
-    text_tree : DebugTreeInfo = field(default_factory=DebugTreeInfo)
+    tree : DebugTreeInfo = field(default_factory=DebugTreeInfo)
 
     def update(self, debug_info_a : Any):
         debug_info = cast(DebugInfo, debug_info_a)
         self.image.update(debug_info.image)
 
-        self.text_tree.update(debug_info.text_tree)
+        self.tree.update(debug_info.tree)

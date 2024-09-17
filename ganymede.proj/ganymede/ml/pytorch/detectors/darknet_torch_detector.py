@@ -92,7 +92,7 @@ class DarknetTorchDetector:
         images_batch_list : List[np.ndarray] = list()
 
         for img in images:
-            img_c = g_img.get_channels(img)
+            img_c = g_img.get_channels_of_numpy(img)
 
             if img_c == 1 and net_c == 3:
                 img = g_img.cast_one_channel_img(img, 3)

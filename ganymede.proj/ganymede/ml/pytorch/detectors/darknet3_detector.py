@@ -40,11 +40,11 @@ class Darknet3Detector:
         with torch.no_grad():
             img = cv.resize(img, (self.img_size, self.img_size), interpolation=cv.INTER_AREA)
 
-            if g_img.get_channels(img) == 1 and self.input_channels == 3:
+            if g_img.get_channels_of_numpy(img) == 1 and self.input_channels == 3:
                 img = cv.cvtColor(img, cv.COLOR_GRAY2BGR)
-            elif g_img.get_channels(img) == 3 and self.input_channels == 1:
+            elif g_img.get_channels_of_numpy(img) == 3 and self.input_channels == 1:
                 img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-            elif g_img.get_channels(img) == 3 and self.input_channels == 3:
+            elif g_img.get_channels_of_numpy(img) == 3 and self.input_channels == 3:
                 img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 
             img_batch = g_tensor.img_list_to_tensor_batch([img])

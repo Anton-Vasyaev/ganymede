@@ -23,7 +23,11 @@ def imread(path: str, flags: int = cv.IMREAD_UNCHANGED) -> np.ndarray:
         return img
 
 
-def imwrite(img: np.ndarray, path: str, mkdir: bool = True):
+def imwrite(
+    path: str,
+    img: np.ndarray, 
+    mkdir: bool = True
+):
     path_p = Path(path)
     parent = path_p.parent
 

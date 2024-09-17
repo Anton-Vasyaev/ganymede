@@ -4,6 +4,7 @@ import torch
 import numpy as np
 import cv2   as cv
 # project
+from ganymede.draw.text import TextBlock
 import ganymede.draw.text    as g_draw
 import ganymede.opencv  as g_cv
 import ganymede.imaging as g_image
@@ -72,7 +73,7 @@ def visualise_batch(
 
         img = img.copy()
         
-        if visualise_channels and g_image.get_channels(img) != 1:
+        if visualise_channels and g_image.get_channels_of_numpy(img) != 1:
             for map_idx in range(img.shape[2]):
                 map = img[...,map_idx]
                 g_image.create_channel_if_not_exist(map)
@@ -91,7 +92,13 @@ def visualise_batch(
 
             g_draw.draw_text_list(
                 img,
-                [ (f'{idx}/{len(img_batch)}', (0.03, 0.05), (0, 240, 0)) ],
+                [
+                    TextBlock(
+                        f'{idx}/{len(img_batch)}',
+                        (0.03, 0.05), 
+                        (0, 240, 0)
+                    ) 
+                ],
                 0.1
             )
 

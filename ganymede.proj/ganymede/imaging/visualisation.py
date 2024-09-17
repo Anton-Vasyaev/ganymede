@@ -5,7 +5,7 @@ import numpy as np
 import cv2 as cv
 # project
 import ganymede.opencv as g_cv
-from ganymede.imaging.auxiliary import get_channels
+from ganymede.imaging.auxiliary import get_channels_of_numpy
 from ganymede.imaging.processing import cast_one_channel_img
 
 
@@ -56,7 +56,7 @@ def form_images_tile(
         if np.issubdtype(img.dtype, np.floating):
             img = (img * 255).astype(np.uint8)
 
-        if get_channels(img) == 1:
+        if get_channels_of_numpy(img) == 1:
             img = cast_one_channel_img(img, 3)
         img = g_cv.resize_frame(img, (max_w, max_h))
         img_h, img_w = img.shape[0:2]

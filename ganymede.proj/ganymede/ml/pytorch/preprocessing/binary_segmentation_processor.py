@@ -13,7 +13,7 @@ class BinarySegmentationProcessor:
         self,
         input_size,
         img_type,
-        input_processor=default_input_processor
+        input_processor=default_input_processor,
     ):
         self.input_size      = input_size
         self.img_type        = img_type

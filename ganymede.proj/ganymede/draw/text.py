@@ -1,5 +1,7 @@
 # python
 from copy import deepcopy
+from dataclasses import dataclass
+from typing      import Tuple, List
 # 3rd party
 import numpy as np
 from   PIL   import ImageFont, ImageDraw, Image
@@ -10,9 +12,19 @@ GRAY_GREEN = 0.587
 GRAY_BLUE  = 0.114
 
 
+@dataclass
+class TextBlock:
+    text : str
+
+    left_corner : Tuple[float, float]
+
+    color : Tuple[float, float, float]
+
+
+
 def draw_text_list(
     img,
-    text_list,
+    text_list : List[TextBlock],
     font_size=0.05
 ):
     is_gray_img_flag = False
@@ -39,15 +51,19 @@ def draw_text_list(
     draw    = ImageDraw.Draw(img_pil)
 
     for text_block in text_list:
-        text, left_corner, color = text_block
+        text        = text_block.text 
+        left_corner = text_block.left_corner
+        color       = text_block.color
 
         x, y    = left_corner
         x, y    = int(x * img_w), int(y * img_h)
         r, g, b = color
 
-        real_color = (b, g, r)
+        real_color : Tuple[int, int, int] | int
         if is_gray_img_flag:
             real_color = int(r * GRAY_RED + g * GRAY_GREEN + b * GRAY_BLUE)
+        else:
+            real_color = (int(b * 255), int(g * 255), int(r * 255))
 
         draw.text((x, y), text, font=font, fill=real_color)
 

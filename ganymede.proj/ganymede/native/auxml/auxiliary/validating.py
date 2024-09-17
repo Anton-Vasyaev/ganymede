@@ -20,5 +20,5 @@ def validate_return_status(
 
     api_done_return_status(status)
     
-    if err_msg_s != '':
+    if status.correct_status != 1:
         raise Exception(f'Native exception in auxml:{err_msg_s}.')

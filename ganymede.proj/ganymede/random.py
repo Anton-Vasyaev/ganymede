@@ -1,87 +1,100 @@
 # python
 import random
+import numpy as np
 from enum   import Enum
 from random import Random
-from typing import TypeVar, List, Sequence, Type, Optional, cast
+from typing import TypeVar, List, Sequence, Tuple, Type, Optional, cast
 
 T     = TypeVar('T')
 EnumT = TypeVar('EnumT', bound=Enum)
 
 
-def provide_default_instance_if_none(random_instance : Optional[Random]) -> Random:
-    if random_instance is None: return cast(Random, random)
-    else: return random_instance
+class RandomWrapper:
+    __random_instance : random.Random
+
+    def __init__(self, random_instance : random.Random):
+        self.__random_instance = random_instance
 
 
-def get_random_distance(
+    def rand_distance(self, start : float, end : float) -> float:
+        distance = end - start
+
+        rand_val = start + (self.__random_instance.random() * distance)
+
+        return rand_val
+
+
+    def rand_range(self, range : Tuple[float, float]) -> float:
+        return self.rand_distance(
+            range[0],
+            range[1]
+        )
+
+    
+    def rand_bool(self, prob : float) -> bool:
+        val = self.__random_instance.random()
+        return val <= prob
+
+
+    def rand_enum(self, enum_type : Type[EnumT]) -> EnumT:
+        return enum_type(int(self.__random_instance.randint(0, len(enum_type))))
+
+    
+    def rand_int_range(self, range : Tuple[int, int]) -> int:
+        return self.__random_instance.randint(range[0], range[1])
+
+
+    def multisample(
+        self,
+        data       : Sequence[T],
+        sample_len : int
+    ) -> List[T]:
+        if len(data) < 1:
+            raise ValueError(f'invalid len(data) < 0:{len(data)}')
+        sample_list : List[T] = []
+
+        current_len = sample_len
+        data_len    = len(data)
+        while current_len > 0:
+            current_sample_len = min(data_len, current_len)
+            sample_list += self.__random_instance.sample(
+                data, 
+                current_sample_len
+            )
+            current_len -= data_len
+
+        return sample_list
+
+
+DEFAULT_WRAPPER = RandomWrapper(cast(Random, random))
+
+def rand_distance(
     start           : float  = 0.0, 
-    end             : float  = 1.0,
-    random_instance : Optional[Random] = None
+    end             : float  = 1.0
 ) -> float:
-    random_instance = provide_default_instance_if_none(random_instance)
-
-    distance = end - start
-
-    rand_val = start + (random_instance.random() * distance)
-
-    return rand_val
+    return DEFAULT_WRAPPER.rand_distance(start, end)
 
 
+def rand_range(
+    range : Tuple[float, float],
+):
+    return DEFAULT_WRAPPER.rand_range(range)
 
 
-def get_random_bool(
-    true_border     : float  = 0.5,
-    random_instance : Optional[Random] = None
+def rand_bool(
+    prob            : float  = 0.5,
 ) -> bool:
-    random_instance = provide_default_instance_if_none(random_instance)
-
-    val = random_instance.random()
-    if val > true_border: return True
-    else: return False
+    return DEFAULT_WRAPPER.rand_bool(prob)
 
 
-def get_random_enum(
-    enum_type       : Type[EnumT],
-    random_instance : Optional[Random] = None
+def rand_enum(
+    enum_type       : Type[EnumT]
 ) -> EnumT:
-    random_instance = provide_default_instance_if_none(random_instance)
-
-    return enum_type(int(get_random_distance(0, len(enum_type))))
-
-
-def choice(
-    data            : Sequence[T],
-    random_instance : Optional[Random] = None
-) -> T:
-    random_instance = provide_default_instance_if_none(random_instance)
-
-    return random_instance.choice(data)
-
-
-def sample(
-    data            : Sequence[T],
-    len             : int,
-    random_instance : Optional[Random] = None
-) -> List[T]:
-    random_instance = provide_default_instance_if_none(random_instance)
-
-    return random_instance.sample(data, len)
+    return DEFAULT_WRAPPER.rand_enum(enum_type)
 
 
 def multisample(
     data            : Sequence[T],
     sample_len      : int,
-    random_instance : Optional[Random] = None
 ) -> List[T]:
-    if len(data) < 1:
-        raise ValueError(f'invalid len(data) < 0:{len(data)}')
-    sample_list : List[T] = []
-
-    current_len = sample_len
-    data_len    = len(data)
-    while current_len > 0:
-        current_sample_len = min(data_len, current_len)
-        sample_list += sample(data, current_sample_len, random_instance)
-        current_len -= data_len
-
-    return sample_list
+    return DEFAULT_WRAPPER.multisample(data, sample_len)

@@ -11,7 +11,7 @@ class TrainParameters:
 
     epochs : int
 
-    enable_gpu : bool
+    train_device_name : str
 
     input_size : Tuple[int, int]
 

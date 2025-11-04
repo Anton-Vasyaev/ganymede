@@ -15,6 +15,10 @@ def get_channels_of_numpy(img : np.ndarray) -> int:
     else: return img.shape[2]
 
 
+def get_channels(img : np.ndarray) -> int:
+    return get_channels_of_numpy(img)
+
+
 def get_row_stride_of_numpy(img : np.ndarray) -> int:
     h, w = img.shape[0:2]
 

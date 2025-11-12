@@ -12,6 +12,16 @@ def create_channel_if_not_exist(img : np.ndarray) -> None:
         img.shape = img.shape + (1,)
 
 
+def create_view_with_channel(img : np.ndarray) -> np.ndarray:
+    img_h, img_w = img.shape[0:2]
+    
+    if len(img.shape) == 2:
+        return img.reshape((img_h, img_w, 1))
+    else:
+        return img
+        
+
+
 def cast_one_channel_img(
     img      : np.ndarray, 
     channels : int

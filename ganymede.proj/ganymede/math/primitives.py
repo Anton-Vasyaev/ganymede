@@ -6,6 +6,8 @@ from numbers import Number
 AlgTuple2 = Tuple[float, float]
 ''' Algebraic tuple, contain two elements. '''
 
+AlgTuple2i = Tuple[int, int]
+
 AlgTuple3 = Tuple[float, float, float]
 ''' Algebraic tuple, contain three elements. '''
 
@@ -20,6 +22,8 @@ Vector2 = AlgTuple2
 
 Size2 = AlgTuple2
 ''' Alias for `AlgTuple2`. Represent two-dimensional size. '''
+
+Size2i = AlgTuple2i
 
 Point3 = AlgTuple3
 ''' Alias for `AlgTuple3`. Represent three-dimensional coordinate. '''
@@ -38,6 +42,8 @@ Vector4 = AlgTuple4
 
 BBox2 = Tuple[float, float, float, float]
 ''' Alias for tuple of four float value. Represent bounding box in two-dimensional measurement. '''
+
+BBox2i = Tuple[int, int, int, int]
 
 BBox3 = Tuple[float, float, float, float, float, float]
 ''' Alias for tuple of six float values. Represent bounding box in three-dimensional measurement. '''

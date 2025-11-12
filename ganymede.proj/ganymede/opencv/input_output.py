@@ -5,6 +5,10 @@ import os
 import cv2 as cv  # type: ignore
 import numpy as np
 from pathlib import Path
+# project
+from ganymede.imaging.processing import (
+    create_view_with_channel
+)
 
 
 def imread(path: str, flags: int = cv.IMREAD_UNCHANGED) -> np.ndarray:
@@ -19,6 +23,8 @@ def imread(path: str, flags: int = cv.IMREAD_UNCHANGED) -> np.ndarray:
 
         if img is None:
             raise Exception(f"failed to decode img:{path}")
+
+        img = create_view_with_channel(img)
 
         return img
 

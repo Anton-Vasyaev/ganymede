@@ -102,12 +102,19 @@ def multisample(
     return DEFAULT_WRAPPER.multisample(data, sample_len)
 
 
-def choice_by_scores(
+def choice_by_probs(
     items  : List[T],
-    scores : List[T]
-):
-    probs = g_core.normalize_collection(scores)
-    
+    probs  : List[T]
+) -> T:
     selected_item_a = np.random.choice(items, p=probs)
 
     return cast(T, selected_item_a) 
+
+
+def choice_by_scores(
+    items  : List[T],
+    scores : List[T]
+) -> T:
+    probs = g_core.normalize_collection(scores)
+    
+    return choice_by_probs(items, probs)

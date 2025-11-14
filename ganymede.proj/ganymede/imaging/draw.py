@@ -142,7 +142,8 @@ def draw_image_on_image(
     drawed_img  = cv.resize(drawed_img,  inf.place_resize, interpolation=resize_flag)
     drawed_mask = cv.resize(drawed_mask, inf.place_resize, interpolation=resize_flag)
 
-    drawed_img = create_view_with_channel(drawed_img)
+    canvas_img  = create_view_with_channel(canvas_img)
+    drawed_img  = create_view_with_channel(drawed_img)
     drawed_mask = create_view_with_channel(drawed_mask)
 
     place_x1, place_y1, place_x2, place_y2 = inf.place_coords

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 # 3rd party
 import numpy as np
 
-from nameof import nameof
+from varname import nameof
 # project
 from .data.image_type import ImageType
 from .auxiliary  import get_channels_of_numpy

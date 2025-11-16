@@ -1,7 +1,7 @@
 # python
 from enum   import IntEnum, auto
 # 3rd party
-from nameof import nameof
+from varname import nameof
 
 
 class ImageType(IntEnum):

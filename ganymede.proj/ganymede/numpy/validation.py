@@ -1,7 +1,7 @@
 # 3rd party
 import numpy as np
 
-from nameof import nameof
+from varname import nameof
 
 
 def number_of_dimensions_equal(

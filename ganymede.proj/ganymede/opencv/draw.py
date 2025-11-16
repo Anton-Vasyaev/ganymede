@@ -21,8 +21,8 @@ def draw_circle(
     radius : int = 1,
     thickness : int = 1,
     line_type : int = cv.FILLED,
-    normalize_coords = True
-):
+    normalize_coords : bool = True
+) -> None:
     r, g, b = color
     color   = (b, g, r)
     
@@ -32,9 +32,28 @@ def draw_circle(
     if normalize_coords: x, y = x * img_w, y * img_h
     x, y = int(x), int(y)
 
-    r, g, b = color
-
     cv.circle(img, (x, y), radius, color, thickness, line_type)
+
+
+def fill_circle(
+    img              : np.ndarray,
+    coord            : Point2,
+    color            : AlgTuple3,
+    radius           : float,
+    normalize_coords : bool = True
+) -> None:
+    r, g, b = color
+    color   = (b, g, r)
+    
+    img_h, img_w = img.shape[0:2]
+
+    x, y = coord
+    if normalize_coords: x, y = x * img_w, y * img_h
+    x, y = int(x), int(y)
+
+    radius = int(radius * img_w)
+
+    cv.circle(img, (x, y), radius, color, -1, 8, 0)
 
 
 def draw_line_p(
@@ -147,10 +166,10 @@ def draw_polyline(
         
         
 def draw_polygon(
-    img : np.ndarray,
-    coords : List[Point2],
-    color : AlgTuple3,
-    thickness : int = 1,
+    img               : np.ndarray,
+    coords            : List[Point2],
+    color             : AlgTuple3,
+    thickness         : int = 1,
     normalized_coords : bool = True
 ):
     draw_polyline(img, coords, color, thickness, normalized_coords)

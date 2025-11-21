@@ -2,7 +2,7 @@
 from typing      import Any, List
 from dataclasses import dataclass
 # 3rd party
-from nameof import nameof
+from varname import nameof
 
 
 @dataclass

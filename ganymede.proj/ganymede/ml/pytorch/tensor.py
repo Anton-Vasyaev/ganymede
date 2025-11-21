@@ -11,21 +11,17 @@ import ganymede.imaging as g_image
 
 
 def img_batch_to_tensor_batch(
-    img_batch  : np.ndarray, 
-    normalized : bool = True
+    img_batch  : np.ndarray
 ) -> torch.Tensor:
     tensor = torch.from_numpy(img_batch)
     tensor = tensor.permute(0, 3, 1, 2)
     tensor = tensor.type(torch.float32)
-    
-    if normalized: tensor /= 255
 
     return tensor
 
 
 def img_list_to_tensor_batch(
-    img_list   : List[np.ndarray], 
-    normalized : bool = True
+    img_list   : List[np.ndarray]
 ) -> torch.Tensor:
     img_stack_list = []
     for img in img_list:
@@ -36,7 +32,7 @@ def img_list_to_tensor_batch(
 
     img_stack = np.vstack(img_stack_list)
 
-    return img_batch_to_tensor_batch(img_stack, normalized)
+    return img_batch_to_tensor_batch(img_stack)
 
 
 def tensor_batch_to_img_batch(tensor : torch.Tensor) -> np.ndarray:

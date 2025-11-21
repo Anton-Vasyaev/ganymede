@@ -115,6 +115,37 @@ def place_image_on_image(
         src_y1:src_y2,
         src_x1:src_x2
     ]
+    
+
+def place_mask_on_mask(
+    dst_img     : np.ndarray,
+    src_img     : np.ndarray,
+    draw_box    : BBox2,
+    resize_flag : int = cv.INTER_AREA
+):
+    dst_channels = get_channels_of_numpy(dst_img)
+    src_channels   = get_channels_of_numpy(src_img)
+
+    assert dst_channels == src_channels
+    assert dst_img.dtype == src_img.dtype
+
+    dst_h, dst_w = dst_img.shape[0:2]
+    inf = __calculate_place_coords_for_src_dst(
+        (dst_w, dst_h),
+        draw_box
+    )
+
+    src_img = cv.resize(src_img, inf.place_resize, interpolation=resize_flag)
+    src_img = create_view_with_channel(src_img)
+
+    place_x1, place_y1, place_x2, place_y2 = inf.place_coords
+
+    src_x1, src_y1, src_x2, src_y2 = inf.src_offsets
+
+    dst = dst_img[place_y1:place_y2, place_x1:place_x2]
+    src = src_img[src_y1:src_y2, src_x1:src_x2]
+    
+    dst[...] = np.maximum(src, dst)
 
 
 def draw_image_on_image(

@@ -57,10 +57,13 @@ class RandomIndexDistributor:
 
     def __init__(
         self, 
-        len : int,
+        size : int,
         random_instance : Optional[random.Random]
     ):
-        self.__index_collection = cast(List[int], np.arange(len).tolist())
+        if size == 0:
+            raise Exception(f'len of size:{size}.')
+        
+        self.__index_collection = cast(List[int], np.arange(size).tolist())
 
         if not random_instance is None:
             self.__random_instance = random_instance

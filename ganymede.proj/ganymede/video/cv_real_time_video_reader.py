@@ -10,7 +10,7 @@ from .data.read_frame_data import ReadFrameData
 
 
 class CvRealTimeVideoReader:
-    __far_read_data : ReadFrameData
+    __far_read_data : Optional[ReadFrameData]
 
     __start_read_time : int
 
@@ -26,7 +26,7 @@ class CvRealTimeVideoReader:
 
 
     def __init__(self, path : str, speed : float = 1.0):
-        self.__far_read_data = ReadFrameData(np.array([]), -1)
+        self.__far_read_data = None
 
         self.__start_read_time = 0
         self.__start_read_timestamp = 0
@@ -36,7 +36,7 @@ class CvRealTimeVideoReader:
         self.__speed = speed
 
 
-    def read(self) -> Optional[ReadFrameData]:
+    def default_read(self) -> Optional[ReadFrameData]:
         frame, timestamp = self.__reader.read()
 
         if frame is None:
@@ -63,7 +63,7 @@ class CvRealTimeVideoReader:
             del read_frame_data.frame
 
 
-    def speed_read(self) -> Optional[ReadFrameData]:
+    def read(self) -> Optional[ReadFrameData]:
         if self.__start_read_time == 0:
             if self.__far_read_data is None:
                 frame, timestamp = self.__reader.read()

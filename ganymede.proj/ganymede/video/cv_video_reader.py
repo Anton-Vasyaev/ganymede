@@ -4,6 +4,7 @@ from typing import Tuple, Optional
 # 3rd party
 import numpy as np
 import cv2 as cv # type: ignore
+from .data.read_frame_data import ReadFrameData
 
 
 ReadResult = Tuple[Optional[np.ndarray], Optional[int]]
@@ -46,7 +47,8 @@ class CvVideoReader:
         self.capture.set(cv.CAP_PROP_POS_MSEC, position / 1000)
 
 
-    def read(self) -> ReadResult:
+    def read(self) -> ReadFrameData:
+        
         ret, frame = self.capture.read()
 
         if not ret: return None, None

@@ -14,8 +14,8 @@ def load_from_file(path : str) -> dict:
 
 
 def write_to_file(
-    data     : dict, 
     path     : str, 
+    data     : dict, 
     indent   : Optional[int] = None,
     encoding = 'utf-8'
 ):

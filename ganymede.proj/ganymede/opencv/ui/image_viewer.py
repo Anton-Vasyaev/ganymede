@@ -30,7 +30,7 @@ class ImageViewer:
             (255, 0, 0)
         ]
 
-        if g_img.get_channels(img) == 1:
+        if g_img.get_channels_of_numpy(img) == 1:
             img = g_img.cast_one_channel_img(img, 3)
 
         draw_text_list(

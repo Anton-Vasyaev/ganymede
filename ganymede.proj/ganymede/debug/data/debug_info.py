@@ -16,4 +16,4 @@ class DebugInfo:
         debug_info = cast(DebugInfo, debug_info_a)
         self.image.update(debug_info.image)
 
-        self.tree.update(debug_info.tree)
+        self.tree.update_tree(debug_info.tree)

@@ -21,7 +21,7 @@ def augmentate_basic_color(
         mod_value = 255
 
     img = img.astype(np.float32)
-    channels = g_imaging.get_channels(img)
+    channels = g_imaging.get_channels_of_numpy(img)
 
     if channels == 3:
         img[:,:,0] *= blue

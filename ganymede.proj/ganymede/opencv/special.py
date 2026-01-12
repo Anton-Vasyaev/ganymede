@@ -45,8 +45,10 @@ def equalize_hist_color_yuv(bgr_img: np.ndarray) -> np.ndarray:
 
 def equalize_hist_color_channel(bgr_img: np.ndarray) -> np.ndarray:
     eq_img = bgr_img.copy()
+    
+    channels = eq_img.shape[2]
 
-    for c_i in range(3):
+    for c_i in range(channels):
         eq_img[..., c_i] = cv.equalizeHist(eq_img[..., c_i])
 
     return eq_img

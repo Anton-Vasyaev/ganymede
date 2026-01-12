@@ -17,6 +17,9 @@ class DebugTreeInfo:
     def update(self, data : Dict[str, Any]):
         self.data.update(data)
 
+    def update_tree(self, tree : Any):
+        self.data.update(tree.data)
+
     def append_value(self, path : str, value : Any):
         pathes = path.split('.')
 

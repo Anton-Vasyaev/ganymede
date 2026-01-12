@@ -4,27 +4,24 @@ import torch
 import numpy as np
 import cv2   as cv
 # project
+from ganymede.draw.text import TextBlock
 import ganymede.draw.text    as g_draw
 import ganymede.opencv  as g_cv
 import ganymede.imaging as g_image
 
 
 def img_batch_to_tensor_batch(
-    img_batch  : np.ndarray, 
-    normalized : bool = True
+    img_batch  : np.ndarray
 ) -> torch.Tensor:
     tensor = torch.from_numpy(img_batch)
     tensor = tensor.permute(0, 3, 1, 2)
     tensor = tensor.type(torch.float32)
-    
-    if normalized: tensor /= 255
 
     return tensor
 
 
 def img_list_to_tensor_batch(
-    img_list   : List[np.ndarray], 
-    normalized : bool = True
+    img_list   : List[np.ndarray]
 ) -> torch.Tensor:
     img_stack_list = []
     for img in img_list:
@@ -35,7 +32,7 @@ def img_list_to_tensor_batch(
 
     img_stack = np.vstack(img_stack_list)
 
-    return img_batch_to_tensor_batch(img_stack, normalized)
+    return img_batch_to_tensor_batch(img_stack)
 
 
 def tensor_batch_to_img_batch(tensor : torch.Tensor) -> np.ndarray:
@@ -72,7 +69,7 @@ def visualise_batch(
 
         img = img.copy()
         
-        if visualise_channels and g_image.get_channels(img) != 1:
+        if visualise_channels and g_image.get_channels_of_numpy(img) != 1:
             for map_idx in range(img.shape[2]):
                 map = img[...,map_idx]
                 g_image.create_channel_if_not_exist(map)
@@ -91,7 +88,13 @@ def visualise_batch(
 
             g_draw.draw_text_list(
                 img,
-                [ (f'{idx}/{len(img_batch)}', (0.03, 0.05), (0, 240, 0)) ],
+                [
+                    TextBlock(
+                        f'{idx}/{len(img_batch)}',
+                        (0.03, 0.05), 
+                        (0, 240, 0)
+                    ) 
+                ],
                 0.1
             )
 

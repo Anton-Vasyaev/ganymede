@@ -3,10 +3,10 @@ from dataclasses import dataclass
 # 3rd party
 import numpy as np
 
-from nameof import nameof
+from varname import nameof
 # project
 from .data.image_type import ImageType
-from .auxiliary  import get_channels
+from .auxiliary  import get_channels_of_numpy
 
 
 class NumpyImageHandler:
@@ -20,7 +20,7 @@ class NumpyImageHandler:
         image      : np.ndarray,
         image_type : ImageType    
     ):
-        img_channels      = get_channels(image)
+        img_channels      = get_channels_of_numpy(image)
         img_type_channels = image_type.get_channels()
 
         if img_channels != img_type_channels:

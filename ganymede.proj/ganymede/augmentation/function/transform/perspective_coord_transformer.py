@@ -3,7 +3,7 @@
 # project
 import ganymede.opencv as g_cv
 import ganymede.math.point2 as g_p2
-from ganymede.math.primitives import Mat3x3
+from ganymede.math.primitives import Mat3x3, Point2
 from ganymede.opencv.special import PerspectiveType
 
 
@@ -19,5 +19,5 @@ class PerspectiveCoordTransformer:
     def __init__(self, transform_mat: Mat3x3):
         self.transform_mat = transform_mat
 
-    def __call__(self, coord):
+    def __call__(self, coord : Point2) -> Point2:
         return g_p2.perspective_transform(coord, self.transform_mat)

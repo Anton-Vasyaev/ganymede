@@ -14,7 +14,7 @@ class CvatImageMarkup:
     image_size  : tuple
     polygons    : List[CvatPointsShape]
     polylines   : List[CvatPolyLineShape]
-    points      : List[CvatPolyLineShape]
+    points      : List[CvatPointsShape]
     boxes       : List[CvatBoxShape]
     meta_info   : dict = field(default_factory=dict)
     

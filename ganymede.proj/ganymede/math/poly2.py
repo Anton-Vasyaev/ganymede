@@ -5,7 +5,7 @@ import ganymede.math.vec2 as m_v2
 import ganymede.math.point2 as m_p2
 import ganymede.math.convert as m_convert
 import ganymede.math.relation as m_rel
-from ganymede.math.primitives import Polygon2, Point2
+from ganymede.math.primitives import Polygon2, Point2, BBox2
 
 
 def area(polygon: Polygon2) -> float:
@@ -71,3 +71,11 @@ def rarefire_distance(polygon: Polygon2, distance: float) -> Polygon2:
             prev_p = p
 
     return rarefire_polygon
+
+
+def normalize_on_contour(polygon : Polygon2, contour : BBox2) -> Polygon2:
+    norm_poly = []
+    for p in polygon:
+        norm_poly.append(m_p2.normalize_on_contour(p, contour))
+        
+    return norm_poly

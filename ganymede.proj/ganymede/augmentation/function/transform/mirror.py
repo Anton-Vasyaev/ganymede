@@ -9,7 +9,9 @@ from ganymede.augmentation.function.transform.delegate import delegate_transform
 
 class MirrorCoordTransformer:
     horizontal: bool
+    
     vertical: bool
+
 
     def __init__(
         self,
@@ -18,6 +20,7 @@ class MirrorCoordTransformer:
     ):
         self.horizontal = horizontal
         self.vertical = vertical
+
 
     def __call__(self, coord: Point2) -> Point2:
         x, y = coord
@@ -35,7 +38,7 @@ def __augmentate_img_mirror(
     horizontal: bool,
     vertical: bool
 ):
-    flip_value = None
+    flip_value = 0
 
     if not horizontal and not vertical:
         return img.copy()

@@ -1,5 +1,8 @@
+# python
+from typing import Callable, Tuple
 # 3rd party
 import cv2 as cv
+import numpy as np
 # project
 import ganymede.imaging            as g_image
 import ganymede.ml.pytorch.tensor  as g_tensor
@@ -9,15 +12,21 @@ from ....dataset.processing.auxiliary import default_input_processor
 
 
 class BinarySegmentationProcessor:
+    __input_size : Tuple[int, int]
+    
+    __img_type : ImageType
+    
+    __input_processor : Callable[[np.ndarray], None | np.ndarray]
+    
     def __init__(
         self,
         input_size,
         img_type,
         input_processor=default_input_processor,
     ):
-        self.input_size      = input_size
-        self.img_type        = img_type
-        self.input_processor = input_processor
+        self.__input_size      = input_size
+        self.__img_type        = img_type
+        self.__input_processor = input_processor
 
 
     def __call__(self, batch_example):
@@ -27,28 +36,29 @@ class BinarySegmentationProcessor:
         new_mask_list = []
 
         for img, mask in zip(img_list, mask_list):
-            if self.img_type == ImageType.RGB:
+            if self.__img_type == ImageType.RGB:
                 img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
-            elif self.img_type == ImageType.GRAY:
+            elif self.__img_type == ImageType.GRAY:
                 img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
             else:
                 pass
 
-            img  = cv.resize(img, self.input_size, interpolation=cv.INTER_AREA)
+            img  = cv.resize(img, self.__input_size, interpolation=cv.INTER_AREA)
             g_image.create_channel_if_not_exist(img)
 
-            mask = cv.resize(mask, self.input_size, interpolation=cv.INTER_AREA)
+            mask = cv.resize(mask, self.__input_size, interpolation=cv.INTER_AREA)
 
             new_img_list.append(img)
             new_mask_list.append(mask)
 
-        img_t = g_tensor.img_list_to_tensor_batch(new_img_list, normalized=False)
+        img_t = g_tensor.img_list_to_tensor_batch(new_img_list)
 
-        if not self.input_processor is None: 
-            process_result = self.input_processor(img_t)
-            if not process_result is None: img_t = process_result
+        if not self.__input_processor is None: 
+            process_result = self.__input_processor(img_t)
+            if not process_result is None: 
+                img_t = process_result
 
-        mask_t = g_tensor.img_list_to_tensor_batch(new_mask_list, normalized=True)
+        mask_t = g_tensor.img_list_to_tensor_batch(new_mask_list)
         mask_t[mask_t >= 0.05] = 1.0
         mask_t[mask_t <  0.05] = 0.0
 

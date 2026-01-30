@@ -1,6 +1,6 @@
 # python
 import time
-from typing import Optional
+from typing import Optional, cast
 from datetime import datetime
 # 3rd party
 import numpy as np
@@ -66,26 +66,32 @@ class CvRealTimeVideoReader:
     def read(self) -> Optional[ReadFrameData]:
         if self.__start_read_time == 0:
             if self.__far_read_data is None:
-                frame, timestamp = self.__reader.read()
-
-                if frame is None:
+                read_data = self.__reader.read()
+                
+                if read_data is None:
                     return None
+                
+                frame     = read_data.frame
+                timestamp = read_data.timestamp
                 
                 self.__far_read_data = ReadFrameData(frame, timestamp)
                 self.__start_read_timestamp = timestamp
 
             self.__start_read_time = self.__get_current_time()
 
-        prev_data = self.__far_read_data
+        prev_data = cast(ReadFrameData, self.__far_read_data)
         while True:
             current_time = self.__get_current_time()
             prev_timestamp_duration = prev_data.timestamp - self.__start_read_timestamp
             time_duration = current_time - self.__start_read_time
 
             if time_duration > prev_timestamp_duration:
-                frame, timestamp = self.__reader.read()
-                if frame is None:
-                    break
+                read_data = self.__reader.read()
+                if read_data is None:
+                    return None
+                
+                frame     = read_data.frame
+                timestamp = read_data.timestamp
                 
                 current_read_data = ReadFrameData(frame, timestamp)
 

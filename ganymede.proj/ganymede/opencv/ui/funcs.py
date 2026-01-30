@@ -10,8 +10,7 @@ def imshow(
     window_name, 
     img, 
     wait_ms = 0,
-    normalized_float = True,
-    escape_catch=True
+    normalized_float = True
 ) -> OpenCVWindowKey:
     if np.issubdtype(img.dtype, np.floating):
         if not normalized_float:
@@ -20,18 +19,13 @@ def imshow(
     key_code = cv.waitKey(wait_ms)
     key      = OpenCVWindowKey.from_keycode(key_code)
 
-    if escape_catch:
-        if key == OpenCVWindowKey.ESCAPE:
-            exit()
-
     return key
 
 
 def imshow_multi(
     targets          : List[Tuple[str, np.ndarray]],
     wait_ms          : int  = 0,
-    normalized_float : bool = True,
-    escape_catch     : bool = True
+    normalized_float : bool = True
 ) -> OpenCVWindowKey:
     for window_name, img in targets:
         if np.issubdtype(img.dtype, np.floating):
@@ -42,8 +36,5 @@ def imshow_multi(
 
     key_code = cv.waitKey(wait_ms)
     key      = OpenCVWindowKey.from_keycode(key_code)
-    if escape_catch:
-        if key == OpenCVWindowKey.ESCAPE:
-            exit()
 
     return key

@@ -7,6 +7,8 @@ import ganymede.math.point2 as m_p2
 from ganymede.math.primitives import BBox2, Point2, Size2, Vector2
 
 
+    
+
 def width(bbox: BBox2) -> float:
     x1, y1, x2, y2 = bbox
 

@@ -41,6 +41,7 @@ def equalize_hist_color_yuv(bgr_img: np.ndarray) -> np.ndarray:
     bgr_img = cv.cvtColor(yuv, cv.COLOR_YUV2BGR)
 
     return bgr_img
+    
 
 
 def equalize_hist_color_channel(bgr_img: np.ndarray) -> np.ndarray:

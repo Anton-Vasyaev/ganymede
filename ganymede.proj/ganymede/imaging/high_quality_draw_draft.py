@@ -1,6 +1,6 @@
 # python
 from dataclasses import dataclass
-from typing import Tuple
+from typing import Tuple, cast
 # 3rd party
 import cv2 as cv
 import numpy as np
@@ -23,12 +23,24 @@ def __apply_patch_on_uint8(
     draw_patch   : np.ndarray,
     mask_patch   : np.ndarray
 ):
-    canvas_patch_f32 = canvas_patch.astype(np.float32) / 255.0
+    patch_h, patch_w = canvas_patch.shape[0:2]
+    draw_h, draw_w   = draw_patch.shape[0:2]
+    
+    canvas_patch_f32 = canvas_patch.astype(np.float32)
+    canvas_patch_f32 /= 255.0
+    canvas_patch_f32 = cv.resize(
+        canvas_patch_f32, 
+        (draw_w, draw_h), 
+        interpolation=cv.INTER_AREA
+    )
+    
     draw_patch_f32   = draw_patch.astype(np.float32) / 255.0
     mask_patch_f32   = mask_patch.astype(np.float32) / 255.0
 
     result = canvas_patch_f32 * (-mask_patch_f32 + 1.0) + draw_patch_f32 * mask_patch_f32
     result *= 255.0
+    
+    result = cv.resize(result, (patch_w, patch_h), interpolation=cv.INTER_AREA)
 
     canvas_patch[...] = result.astype(np.uint8)
 
@@ -38,7 +50,20 @@ def __apply_patch_on_normalized_f32(
     draw_patch   : np.ndarray,
     mask_patch   : np.ndarray
 ):
-    canvas_patch[...] = canvas_patch[...] * (-mask_patch + 1.0) + (draw_patch * mask_patch)
+    patch_h, patch_w = canvas_patch.shape[0:2]
+    draw_h,  draw_w  = draw_patch.shape[0:2]
+    
+    canvas_patch_res = cv.resize(
+        canvas_patch,
+        (draw_w, draw_h),
+        interpolation=cv.INTER_AREA
+    )
+    
+    res = canvas_patch_res[...] * (-mask_patch + 1.0) + (draw_patch * mask_patch)
+    
+    res = cv.resize(res, (patch_w, patch_h), interpolation=cv.INTER_AREA)
+    
+    canvas_patch[...] = res
 
 
 @dataclass
@@ -169,10 +194,6 @@ def draw_image_on_image(
         (canvas_w, canvas_h),
         draw_box
     )
-
-    drawed_img  = cv.resize(drawed_img,  inf.place_resize, interpolation=resize_flag)
-    drawed_mask = cv.resize(drawed_mask, inf.place_resize, interpolation=resize_flag)
-
     canvas_img  = create_view_with_channel(canvas_img)
     drawed_img  = create_view_with_channel(drawed_img)
     drawed_mask = create_view_with_channel(drawed_mask)
@@ -199,75 +220,5 @@ def draw_image_on_image(
         )
     elif canvas_img.dtype == np.uint8:
         __apply_patch_on_uint8(canvas_patch, draw_patch, mask_patch)
-    elif canvas_img.dtype == np.float32 and normalized:
-        raise Exception(f'Not implemented for float32 not normalized image (from 0 to 255 range).')
-    
-    
-def high_quality_draw_image_on_image(
-    canvas_img  : np.ndarray,
-    drawed_img  : np.ndarray,
-    drawed_mask : np.ndarray,
-    draw_box    : BBox2
-) -> None:
-    assert drawed_img.shape[0:2] == drawed_mask.shape[0:2]
-    canvas_channels = get_channels_of_numpy(canvas_img)
-    draw_channels   = get_channels_of_numpy(drawed_img)
-
-    assert canvas_channels == draw_channels
-    assert canvas_img.dtype == drawed_img.dtype
-    assert drawed_img.dtype == drawed_mask.dtype
-    
-    canv_h, canv_w = canvas_img.shape[0:2]
-    draw_h, draw_w = drawed_img.shape[0:2]
-    
-    # calculate roi coords
-    # patch box - box on canvas img
-    patch_box = m_bbox2.clip(draw_box, 0.0, 1.0)
-    # drawed box - box on drawed_img
-    drawed_box = m_bbox2.normalize_on_contour(patch_box, draw_box)
-    drawed_box = m_bbox2.clip(drawed_box, 0.0, 1.0)
-    
-    p_x1, p_y1, p_x2, p_y2 = patch_box
-    p_x1 = int(p_x1 * canv_w)
-    p_y1 = int(p_y1 * canv_h)
-    p_x2 = int(p_x2 * canv_w)
-    p_y2 = int(p_y2 * canv_h)
-    
-    d_x1, d_y1, d_x2, d_y2 = drawed_box
-    d_x1 = int(d_x1 * draw_w)
-    d_y1 = int(d_y1 * draw_h)
-    d_x2 = int(d_x2 * draw_w)
-    d_y2 = int(d_y2 * draw_h)
-    
-    # Валидация если координаты не за границей изображения
-    if p_x1 >= p_x2 or p_y1 >= p_y2:
-        return
-    if d_x1 >= d_x2 or d_y1 >= d_y2:
-        return
-    
-    drawed_img = drawed_img[d_y1:d_y2,d_x1:d_x2]
-    drawed_mask = drawed_mask[d_y1:d_y2,d_x1:d_x2]
-    draw_h, draw_w = drawed_img.shape[0:2]
-    
-    patch = canvas_img[p_y1:p_y2, p_x1:p_x2]
-    orig_patch_h, orig_patch_w = patch.shape[0:2]
-    
-    patch = cv.resize(patch, (draw_w, draw_h), interpolation=cv.INTER_AREA)
-
-    orig_type = patch.dtype
-    if orig_type == np.uint8:
-        patch = patch.astype(np.float32) / 255.0
-        drawed_img  = drawed_img.astype(np.float32)  / 255.0
-        drawed_mask = drawed_mask.astype(np.float32) / 255.0
-        
-    drawed_mask = create_view_with_channel(drawed_mask)
-        
-    patch = patch * (-drawed_mask + 1.0) + drawed_img * drawed_mask
-    
-
-    if orig_type == np.uint8:
-        patch = (patch * 255.0).astype(np.uint8)
-    
-    patch = cv.resize(patch, (orig_patch_w, orig_patch_h), interpolation=cv.INTER_AREA)
-    
-    canvas_img[p_y1:p_y2, p_x1:p_x2] = patch
+    else:
+        raise Exception(f'Not implemented for {canvas_img.dtype}')

@@ -1,4 +1,5 @@
 # python
+from typing import List
 # project
 import ganymede.math.alg_tuple2 as m_t2
 import ganymede.math.vec2 as m_v2
@@ -79,3 +80,47 @@ def normalize_on_contour(polygon : Polygon2, contour : BBox2) -> Polygon2:
         norm_poly.append(m_p2.normalize_on_contour(p, contour))
         
     return norm_poly
+
+
+
+def get_interpolate_position_on_polyline(
+    polyline : List[Point2],
+    interpolate_value : float
+) -> Point2:
+    if len(polyline) < 2:
+        raise ValueError(f'len of polyline < 2:{len(polyline)}')
+    
+    if interpolate_value < 0.0 or interpolate_value > 1.0:
+        raise ValueError(f'invalid range of norm_len:{interpolate_value} (requried [0.0, 1.0]).')
+    
+    
+    full_len = 0.0
+    
+    prev_p = polyline[0]
+    for p in polyline[1:]:
+        full_len += m_p2.distance(p, prev_p)
+        prev_p = p
+        
+    move_len = 0.0
+    requred_dist = interpolate_value * full_len
+    prev_p = polyline[0]
+    for p in polyline:
+        current_len = m_p2.distance(p, prev_p)
+        if move_len + current_len > requred_dist:
+            vec_len = requred_dist - move_len
+            
+            if vec_len == 0.0:
+                return prev_p
+            
+            vec_point = m_t2.sub(p, prev_p)
+            vec_point = m_v2.normalize(vec_point, vec_len)
+            
+            calc_p = m_t2.add(prev_p, vec_point)
+            
+            return calc_p
+            
+        prev_p = p
+        move_len += current_len
+            
+
+    return polyline[-1]

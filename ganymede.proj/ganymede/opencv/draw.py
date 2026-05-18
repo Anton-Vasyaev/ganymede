@@ -142,6 +142,9 @@ def draw_polyline(
     thickness : int = 1,
     normalized_coords : bool = True
 ):
+    if len(coords) <= 1:
+        return
+    
     r, g, b = color
     color   = b, g, r
 
@@ -172,6 +175,9 @@ def draw_polygon(
     thickness         : int = 1,
     normalized_coords : bool = True
 ):
+    if len(coords) <= 1:
+        return
+    
     draw_polyline(img, coords, color, thickness, normalized_coords)
 
     p1 = coords[0]

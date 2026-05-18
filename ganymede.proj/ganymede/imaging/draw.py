@@ -18,7 +18,7 @@ def check_empty_int_box(
     return box[1] - box[0] == 0 or box[3] - box[2] == 0
 
 
-def __apply_patch_on_uint8(
+def _apply_patch_on_uint8(
     canvas_patch : np.ndarray,
     draw_patch   : np.ndarray,
     mask_patch   : np.ndarray
@@ -33,7 +33,7 @@ def __apply_patch_on_uint8(
     canvas_patch[...] = result.astype(np.uint8)
 
 
-def __apply_patch_on_normalized_f32(
+def _apply_patch_on_normalized_f32(
     canvas_patch : np.ndarray,
     draw_patch   : np.ndarray,
     mask_patch   : np.ndarray
@@ -50,7 +50,7 @@ class _PlaceInfo:
     src_offsets : Tuple[int, int, int, int]
 
 
-def __calculate_place_coords_for_src_dst(
+def calculate_place_coords_for_src_dst(
     dst_size : Tuple[int, int],
     draw_box : BBox2
 ):
@@ -99,7 +99,7 @@ def place_image_on_image(
     assert dst_img.dtype == src_img.dtype
 
     dst_h, dst_w = dst_img.shape[0:2]
-    inf = __calculate_place_coords_for_src_dst(
+    inf = calculate_place_coords_for_src_dst(
         (dst_w, dst_h),
         draw_box
     )
@@ -130,7 +130,7 @@ def place_mask_on_mask(
     assert dst_img.dtype == src_img.dtype
 
     dst_h, dst_w = dst_img.shape[0:2]
-    inf = __calculate_place_coords_for_src_dst(
+    inf = calculate_place_coords_for_src_dst(
         (dst_w, dst_h),
         draw_box
     )
@@ -165,7 +165,7 @@ def draw_image_on_image(
     assert drawed_img.dtype == drawed_mask.dtype
 
     canvas_h, canvas_w = canvas_img.shape[0:2]
-    inf = __calculate_place_coords_for_src_dst(
+    inf = calculate_place_coords_for_src_dst(
         (canvas_w, canvas_h),
         draw_box
     )
@@ -192,13 +192,13 @@ def draw_image_on_image(
     mask_patch = cast_one_channel_img(mask_patch, canvas_channels)
 
     if canvas_img.dtype == np.float32 and normalized:
-        __apply_patch_on_normalized_f32(
+        _apply_patch_on_normalized_f32(
             canvas_patch,
             draw_patch,
             mask_patch
         )
     elif canvas_img.dtype == np.uint8:
-        __apply_patch_on_uint8(canvas_patch, draw_patch, mask_patch)
+        _apply_patch_on_uint8(canvas_patch, draw_patch, mask_patch)
     elif canvas_img.dtype == np.float32 and normalized:
         raise Exception(f'Not implemented for float32 not normalized image (from 0 to 255 range).')
     

@@ -85,9 +85,11 @@ def form_images_tile(
     if not resize is None:
         if frame_size:
             concat_table = g_cv.resize_frame(
-                concat_table, resize, resize_inter)
+                concat_table, resize, resize_inter
+            )
         else:
             concat_table = g_cv.resize_frame(
-                concat_table, resize, resize_inter)
+                concat_table, resize, resize_inter
+            )
 
     return concat_table

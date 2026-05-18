@@ -14,6 +14,25 @@ def length(vec: Vector2) -> float:
     return math.sqrt(square_length(vec))
 
 
+def normalize(vec : Vector2, scale_factor : float = 1.0) -> Vector2:
+    x, y = vec
+    len = length(vec)
+    
+    if len == 0.0:
+        return x, y
+    
+    div_val = (len / scale_factor)
+
+    try:
+        x /= div_val
+        y /= div_val
+    except Exception as e:
+        print(f'div val:{div_val}, len:{len} scale factor:{scale_factor}')
+    
+    return (x, y)
+
+
+
 def vector_product_z(a: Vector2, b: Vector2) -> float:
     ax, ay = a
     bx, by = b

@@ -17,6 +17,8 @@ AlgTuple4 = Tuple[float, float, float]
 Point2 = AlgTuple2
 ''' Alias for `AlgTuple2`. Represent two-dimensional coordinate. '''
 
+Point2i = AlgTuple2i
+
 Vector2 = AlgTuple2
 ''' Alias for `AlgTuple2`. Represent two-dimensional vector. '''
 

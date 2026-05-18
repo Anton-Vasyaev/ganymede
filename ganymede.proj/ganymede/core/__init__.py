@@ -1,6 +1,7 @@
 from .data       import *
 
-from .arithmetic import *
-from .collection import *
-from .search     import *
-from .sort       import *
+
+from .collection     import *
+from .ring_iteration import *
+from .search         import *
+from .sort           import *

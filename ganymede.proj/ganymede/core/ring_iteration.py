@@ -1,6 +1,5 @@
-import typing
-from abc import abstractmethod
-from typing import TypeVar, Protocol
+from typing import List
+
 
 
 def ring_add(
@@ -55,3 +54,33 @@ class RingIterator:
             move_val,
             self.__length
         )
+        
+        
+class RingListIterator[T]:
+    __data : List[T]
+    
+    __iterator : RingIterator
+    
+    def __init__(self, data : List[T]):
+        if len(data) == 0:
+            raise ValueError('len of data is 0')
+        self.__data = data
+        
+        self.__iterator = RingIterator(len(data))
+        
+        
+    def __len__(self) -> int:
+        return len(self.__data)
+    
+    
+    def current_idx(self) -> int:
+        return self.__iterator.current()
+    
+    
+    def current(self) -> T:
+        idx = self.__iterator.current()
+        return self.__data[idx]
+    
+    
+    def move(self, move_val : int):
+        self.__iterator.move(move_val)

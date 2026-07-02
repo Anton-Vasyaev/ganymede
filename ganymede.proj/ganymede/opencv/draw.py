@@ -211,13 +211,14 @@ def fill_polygon(
 
 
 def draw_text(
-    img : np.ndarray, 
-    text : str, 
-    position : Point2, 
-    color : AlgTuple3,
-    thickness  : int = 1,
-    font_scale : float = 0.5,
-    font_type : int = cv.FONT_HERSHEY_DUPLEX,
+    img               : np.ndarray, 
+    text              : str, 
+    position          : Point2, 
+    color             : AlgTuple3,
+    thickness         : int = 1,
+    font_scale        : float = 0.5,
+    font_type         : int = cv.FONT_HERSHEY_DUPLEX,
+    line_type         : int = cv.LINE_AA,
     normalized_coords : bool = True
 ):
     r, g, b = color
@@ -231,7 +232,16 @@ def draw_text(
 
     x, y = int(x), int(y)
 
-    cv.putText(img, text, (x, y), font_type, font_scale, (b, g, r), thickness)
+    cv.putText(
+        img, 
+        text, 
+        (x, y), 
+        font_type, 
+        font_scale, 
+        (b, g, r), 
+        thickness, 
+        line_type
+    )
 
 
 

@@ -207,7 +207,8 @@ def high_quality_draw_image_on_image(
     canvas_img  : np.ndarray,
     drawed_img  : np.ndarray,
     drawed_mask : np.ndarray,
-    draw_box    : BBox2
+    draw_box    : BBox2,
+    normalized  : bool = True
 ) -> None:
     assert drawed_img.shape[0:2] == drawed_mask.shape[0:2]
     canvas_channels = get_channels_of_numpy(canvas_img)

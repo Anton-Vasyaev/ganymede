@@ -19,7 +19,7 @@ __GLFW_INIT = False
 
 
 def impl_glfw_init(
-    window_name : str = 'minimal ImGui/GLFW3 example', 
+    window_name : str, 
     width       : int = 1280, 
     height      : int = 720
 ):
@@ -67,6 +67,8 @@ class IMGUIWindow(object):
     __IMGUI_AUX_LOGGER  = logging.getLogger('ganymede.imgui_auxiliary')
     __IMGUI_WINDOW_FONT = "C:/Windows/Fonts/CONSOLA.TTF" 
     
+    __window_name : str
+    
     __processor : IImguiProcessor
     
     __stop_flag : bool
@@ -80,7 +82,7 @@ class IMGUIWindow(object):
         self
     ):
         self.backgroundColor = (0, 0, 0, 1)
-        self.window = impl_glfw_init()
+        self.window = impl_glfw_init(self.__window_name)
         gl.glClearColor(*self.backgroundColor)
         imgui.create_context()
         io = imgui.get_io()
@@ -132,10 +134,12 @@ class IMGUIWindow(object):
     
     def __init__(
         self,
-        processor : IImguiProcessor
+        window_name : str,
+        processor   : IImguiProcessor
     ):
         super().__init__()
         
+        self.__window_name  = window_name
         self.__processor    = processor
         self.__stop_flag    = False
         self.__thread       = Thread(target=self.__process, daemon=True)
